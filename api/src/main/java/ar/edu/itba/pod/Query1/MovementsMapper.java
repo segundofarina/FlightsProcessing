@@ -1,4 +1,4 @@
-package ar.edu.itba.pod.query1;
+package ar.edu.itba.pod.Query1;
 
 import ar.edu.itba.pod.Movement;
 import ar.edu.itba.pod.MovementType;

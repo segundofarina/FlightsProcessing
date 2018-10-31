@@ -1,4 +1,4 @@
-package ar.edu.itba.pod.client;
+package ar.edu.itba.pod.client.Parsers;
 
 import ar.edu.itba.pod.Airport;
 
@@ -7,7 +7,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class AirportParser implements CsvParser<Airport> {
 
@@ -17,7 +16,7 @@ public class AirportParser implements CsvParser<Airport> {
         try {
             lines = Files.readAllLines(path);
         } catch (IOException e) {
-
+            System.out.println("Unable to load airports");
         }
 
         return getAirportsFrom(lines);
@@ -42,7 +41,7 @@ public class AirportParser implements CsvParser<Airport> {
 
     private Airport getAirportFrom(String line) {
         String[] column = line.split(";");
-        return new Airport(optionalFromStr(column[1]), optionalFromStr(column[2]), column[4], column[21]);
+        return new Airport(optionalFromStr(column[1]), optionalFromStr(column[2]), removeQuotes(column[4]), column[21]);
     }
 
     /*private Optional<String> optionalFromStr(String s) {
@@ -57,6 +56,10 @@ public class AirportParser implements CsvParser<Airport> {
             return null;
         }
         return s;
+    }
+
+    private String removeQuotes(String s) {
+        return s.replaceAll("^\"|\"$", "");
     }
 
 

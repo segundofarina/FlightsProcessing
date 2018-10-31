@@ -1,4 +1,4 @@
-package ar.edu.itba.pod.client;
+package ar.edu.itba.pod.client.Parsers;
 
 import ar.edu.itba.pod.FlightType;
 import ar.edu.itba.pod.Movement;
@@ -10,7 +10,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class MovementParser implements CsvParser<Movement> {
     @Override

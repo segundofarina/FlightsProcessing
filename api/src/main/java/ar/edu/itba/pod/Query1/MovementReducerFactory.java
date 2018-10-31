@@ -1,4 +1,4 @@
-package ar.edu.itba.pod.query1;
+package ar.edu.itba.pod.Query1;
 
 import com.hazelcast.mapreduce.Reducer;
 import com.hazelcast.mapreduce.ReducerFactory;
@@ -7,7 +7,7 @@ public class MovementReducerFactory implements ReducerFactory<String, Integer, I
 
     @Override
     public Reducer<Integer, Integer> newReducer(String s) {
-        return null;
+        return new MovementReducer();
     }
 
     private class MovementReducer extends Reducer<Integer, Integer> {
