@@ -10,4 +10,10 @@
   <artifactId>tp-api</artifactId>
   <version>1.0-SNAPSHOT</version>
   <name>tp-api</name>
+  <dependencies>
+    <dependency>
+      <groupId>com.hazelcast</groupId>
+      <artifactId>hazelcast-all</artifactId>
+    </dependency>
+  </dependencies>
 </project>
