@@ -7,15 +7,8 @@ import ar.edu.itba.pod.client.Parsers.CsvParser;
 import ar.edu.itba.pod.client.Parsers.MovementParser;
 import ar.edu.itba.pod.client.Queries.Query;
 import ar.edu.itba.pod.client.Queries.Query1.Query1;
-import ar.edu.itba.pod.Query1.MovementReducerFactory;
-import ar.edu.itba.pod.Query1.MovementsMapper;
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.ICompletableFuture;
-import com.hazelcast.core.IList;
-import com.hazelcast.mapreduce.Job;
-import com.hazelcast.mapreduce.JobTracker;
-import com.hazelcast.mapreduce.KeyValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

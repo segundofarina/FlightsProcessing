@@ -19,8 +19,7 @@ public class MovementParser implements CsvParser<Movement> {
         try {
              lines = Files.readAllLines(path, StandardCharsets.ISO_8859_1);
         } catch (IOException e) {
-            System.out.println("unable to load file");
-            e.printStackTrace();
+            System.out.println("Unable to load movements");
         }
 
         return getMovementsFrom(lines);
@@ -35,9 +34,6 @@ public class MovementParser implements CsvParser<Movement> {
 
         /* Avoid first line of headers */
         lines.remove(0);
-
-        System.out.println("ACA");
-        System.out.println(lines.get(0));
 
         for(String line : lines) {
             movements.add(getMovementFrom(line));
