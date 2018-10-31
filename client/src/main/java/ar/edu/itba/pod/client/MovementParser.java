@@ -5,6 +5,7 @@ import ar.edu.itba.pod.Movement;
 import ar.edu.itba.pod.MovementType;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -17,15 +18,16 @@ public class MovementParser implements CsvParser<Movement> {
         List<String> lines = null;
 
         try {
-             lines = Files.readAllLines(path);
+             lines = Files.readAllLines(path, StandardCharsets.ISO_8859_1);
         } catch (IOException e) {
-
+            System.out.println("unable to load file");
+            e.printStackTrace();
         }
 
-        return getMovementsFromLines(lines);
+        return getMovementsFrom(lines);
     }
 
-    private List<Movement> getMovementsFromLines(List<String> lines) {
+    private List<Movement> getMovementsFrom(List<String> lines) {
         List<Movement> movements = new ArrayList<>();
 
         if(lines == null) {
@@ -35,14 +37,17 @@ public class MovementParser implements CsvParser<Movement> {
         /* Avoid first line of headers */
         lines.remove(0);
 
+        System.out.println("ACA");
+        System.out.println(lines.get(0));
+
         for(String line : lines) {
-            movements.add(getMovementFromLine(line));
+            movements.add(getMovementFrom(line));
         }
 
         return movements;
     }
 
-    private Movement getMovementFromLine(String line) {
+    private Movement getMovementFrom(String line) {
         String[] column = line.split(";");
         return new Movement(getFlightType(column[3]), getMovementType(column[4]), column[5], column[6]);
     }
