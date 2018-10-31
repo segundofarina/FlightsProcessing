@@ -7,6 +7,7 @@ import ar.edu.itba.pod.client.Parsers.CsvParser;
 import ar.edu.itba.pod.client.Parsers.MovementParser;
 import ar.edu.itba.pod.client.Queries.Query;
 import ar.edu.itba.pod.client.Queries.Query1.Query1;
+import ar.edu.itba.pod.client.Queries.Query2.Query2;
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.core.HazelcastInstance;
 import org.slf4j.Logger;
@@ -35,7 +36,7 @@ public class Client {
         HazelcastInstance hz = HazelcastClient.newHazelcastClient();
 
         /* Get Query */
-        Query query = new Query1(airports, movements, hz);
+        Query query = new Query2(movements, hz);
 
         /* Run Query */
         query.run();
