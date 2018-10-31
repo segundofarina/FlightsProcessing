@@ -88,4 +88,7 @@ fabric.properties
 # Avoid target
 */target/**
 
+#Avoid iml
+*.iml
+
 # End of https://www.gitignore.io/api/intellij
