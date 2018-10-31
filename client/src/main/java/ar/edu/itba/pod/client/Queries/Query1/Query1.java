@@ -2,7 +2,8 @@ package ar.edu.itba.pod.client.Queries.Query1;
 
 import ar.edu.itba.pod.Airport;
 import ar.edu.itba.pod.Movement;
-import ar.edu.itba.pod.Query1.MovementReducerFactory;
+import ar.edu.itba.pod.Query1.MovementsCombinerFactory;
+import ar.edu.itba.pod.Query1.MovementsReducerFactory;
 import ar.edu.itba.pod.Query1.MovementsMapper;
 import ar.edu.itba.pod.client.Queries.Query;
 import com.hazelcast.core.HazelcastInstance;
@@ -43,7 +44,8 @@ public class Query1 implements Query {
          * Key is OACI, Value is number of movements */
         ICompletableFuture<Map<String, Integer>> future = job
                 .mapper(new MovementsMapper())
-                .reducer(new MovementReducerFactory())
+                .combiner(new MovementsCombinerFactory())
+                .reducer(new MovementsReducerFactory())
                 .submit();
 
         /* Get map reduce output */

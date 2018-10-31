@@ -3,7 +3,7 @@ package ar.edu.itba.pod.Query1;
 import com.hazelcast.mapreduce.Reducer;
 import com.hazelcast.mapreduce.ReducerFactory;
 
-public class MovementReducerFactory implements ReducerFactory<String, Integer, Integer> {
+public class MovementsReducerFactory implements ReducerFactory<String, Integer, Integer> {
 
     @Override
     public Reducer<Integer, Integer> newReducer(String s) {
