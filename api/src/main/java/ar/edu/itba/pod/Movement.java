@@ -9,8 +9,8 @@ import java.io.Serializable;
 import java.util.Optional;
 
 public class Movement implements DataSerializable {
-    //private final Optional<FlightType> flightType;
-    private FlightType flightType;
+    private  Optional<FlightType> flightType;
+    //private FlightType flightType;
     private MovementType movementType;
     private String sourceOASI;
     private String destinationOASI;
@@ -18,16 +18,16 @@ public class Movement implements DataSerializable {
     public Movement(){
 
     }
-    //public Movement(Optional<FlightType> flightType, MovementType movementType, String sourceOASI, String destinationOASI) {
-    public Movement(FlightType flightType, MovementType movementType, String sourceOASI, String destinationOASI) {
+    public Movement(Optional<FlightType> flightType, MovementType movementType, String sourceOASI, String destinationOASI) {
+    //public Movement(FlightType flightType, MovementType movementType, String sourceOASI, String destinationOASI) {
         this.flightType = flightType;
         this.movementType = movementType;
         this.sourceOASI = sourceOASI;
         this.destinationOASI = destinationOASI;
     }
 
-    //public Optional<FlightType> getFlightType() {
-    public FlightType getFlightType() {
+    public Optional<FlightType> getFlightType() {
+    //public FlightType getFlightType() {
         return flightType;
     }
 
@@ -45,16 +45,16 @@ public class Movement implements DataSerializable {
 
     @Override
     public void writeData(ObjectDataOutput out) throws IOException {
-        out.writeObject(flightType);
-        out.writeObject(movementType);
+        out.writeUTF(flightType.map(FlightType::name).orElse("NULL"));
+        out.writeUTF(movementType.name());
         out.writeUTF(sourceOASI);
         out.writeUTF(destinationOASI);
     }
 
     @Override
     public void readData(ObjectDataInput in) throws IOException {
-        flightType = in.readObject();
-        movementType = in.readObject();
+        flightType = Optional.of(in.readUTF()).map(s ->  s.equals("NULL") ? null : FlightType.valueOf(s));
+        movementType = MovementType.valueOf(in.readUTF());
         sourceOASI = in.readUTF();
         destinationOASI = in.readUTF();
     }
