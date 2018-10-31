@@ -25,12 +25,17 @@ public class Client {
 
         // Load params
 
+        Printer times = new Printer("times.txt");
         /* Load csv to list */
+        times.log("Inicio de lectura del archivo");
         CsvParser<Airport> airportCsvParser = new AirportParser();
         List<Airport> airports = airportCsvParser.loadFile(Paths.get("aeropuertos.csv"));
 
         CsvParser<Movement> movementCsvParser = new MovementParser();
         List<Movement> movements = movementCsvParser.loadFile(Paths.get("movimientos.csv"));
+
+        times.log("Fin de lectura del archivo");
+
 
         /* Connect client to hazelcast */
         HazelcastInstance hz = HazelcastClient.newHazelcastClient();
@@ -39,9 +44,12 @@ public class Client {
         Query query = new Query2(movements, hz);
 
         /* Run Query */
+        times.log("Inicio del trabajo Map/reduce");
         query.run();
+        times.log("Fin del trabajo Map/reduce");
 
         /* Shutdown this Hazelcast client */
         hz.shutdown();
+        times.close();
     }
 }

@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class MovementParser implements CsvParser<Movement> {
     @Override
@@ -57,14 +58,14 @@ public class MovementParser implements CsvParser<Movement> {
         return Optional.empty();
     }*/
 
-    private FlightType getFlightType(String s) {
+    private Optional<FlightType> getFlightType(String s) {
         if(s.equalsIgnoreCase("cabotaje")) {
-            return FlightType.LOCAL;
+            return Optional.of(FlightType.LOCAL);
         }
         if(s.equalsIgnoreCase("internacional")) {
-            return FlightType.INTERNATIONAL;
+            return Optional.of(FlightType.INTERNATIONAL);
         }
-        return null;
+        return Optional.empty();
     }
 
     private MovementType getMovementType(String s) {

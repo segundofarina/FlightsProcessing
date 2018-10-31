@@ -15,9 +15,7 @@ import com.hazelcast.mapreduce.Job;
 import com.hazelcast.mapreduce.JobTracker;
 import com.hazelcast.mapreduce.KeyValueSource;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 public class Query2 implements Query {
@@ -52,7 +50,7 @@ public class Query2 implements Query {
         List<QueryOutputRow> queryOutput = getQueryOutput(thousandOfMovements);
 
         /* Print query output */
-        System.out.println(thousandOfMovements);
+        printOutput(queryOutput);
     }
 
     private Map<String, Integer> getOaciMovmentsMap(JobTracker jobTracker, IList<Movement> hzMovement) throws InterruptedException, ExecutionException {
@@ -81,7 +79,8 @@ public class Query2 implements Query {
         KeyValueSource<String, Integer> soruce = KeyValueSource.fromMap(hzOaciMovemntsMap);
         Job<String, Integer> job = jobTracker.newJob(soruce);
 
-        /**/
+        /* Run map reduce
+        * Key is thousand of movements, Value is list of oaci codes */
         ICompletableFuture<Map<Integer, List<String>>> future = job
                 .mapper(new ThousandMovementsMapper())
                 .reducer(new ThousandMovementsReducerFactory())
@@ -100,10 +99,38 @@ public class Query2 implements Query {
     private List<QueryOutputRow> getQueryOutput(Map<Integer, List<String>> thosandOfMovements) {
         List<QueryOutputRow> queryOutput = new ArrayList<>();
 
+        for(Integer movementAmount : thosandOfMovements.keySet()) {
+            List<String> values = thosandOfMovements.get(movementAmount);
+
+            if(values.size() > 1) {
+                Collections.sort(values);
+
+                for(int i = 0; i < values.size(); i++) {
+                    String oaci1 = values.get(i);
+
+                    for(int j = i + 1; j < values.size(); j++) {
+                        String oaci2 = values.get(j);
+                        queryOutput.add(new QueryOutputRow(movementAmount, oaci1, oaci2));
+                    }
+                }
+            }
+        }
+
+        /* Sort query output */
+        Collections.sort(queryOutput);
+
         return queryOutput;
     }
 
-    private class QueryOutputRow {
+    private void printOutput(List<QueryOutputRow> queryOutput) { // THIS SHOULD PRINT TO EXTERNAL FILE
+        System.out.println("Grupo;Aeropuerto 1;Aeropuerto 2");
+
+        for(QueryOutputRow row : queryOutput) {
+            System.out.println(row);
+        }
+    }
+
+    private class QueryOutputRow implements Comparable<QueryOutputRow> {
         private final int thousandMovements;
         private final String oaci1;
         private final String oaci2;
@@ -112,6 +139,16 @@ public class Query2 implements Query {
             this.thousandMovements = thousandMovements;
             this.oaci1 = oaci1;
             this.oaci2 = oaci2;
+        }
+
+        @Override
+        public String toString() {
+            return thousandMovements + ";" + oaci1 + ";" + oaci2;
+        }
+
+        @Override
+        public int compareTo(QueryOutputRow o) {
+            return o.thousandMovements - thousandMovements;
         }
     }
 }
