@@ -1,9 +1,8 @@
-package ar.edu.itba.pod.client.Queries.Query4;
+package ar.edu.itba.pod.client.Queries.Query5;
 
 import ar.edu.itba.pod.Movement;
-import ar.edu.itba.pod.Query4.LandingsAmountCombinerFactory;
-import ar.edu.itba.pod.Query4.LandingsAmountMapper;
-import ar.edu.itba.pod.Query4.LandingsAmountReducerFactory;
+import ar.edu.itba.pod.Query5.InternationalMapper;
+import ar.edu.itba.pod.Query5.InternationalReducerFactory;
 import ar.edu.itba.pod.client.Printer;
 import ar.edu.itba.pod.client.Queries.Query;
 import com.hazelcast.core.HazelcastInstance;
@@ -18,19 +17,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-public class Query4 implements Query {
+public class Query5 implements Query {
     private final List<Movement> movements;
     private final HazelcastInstance hz;
-    private final String destinationOaci;
-    private final int numberOfResults;
     private final Printer printer;
+    private final int numberOfResults;
 
-    public Query4(List<Movement> movements, HazelcastInstance hz, String destinationOaci, int numberOfResults, Printer printer) {
+    public Query5(List<Movement> movements, HazelcastInstance hz,int n, Printer printer) {
         this.movements = movements;
         this.hz = hz;
-        this.destinationOaci = destinationOaci;
-        this.numberOfResults = numberOfResults;
         this.printer = printer;
+        this.numberOfResults=n;
     }
 
 
@@ -41,7 +38,7 @@ public class Query4 implements Query {
         hzMovement.addAll(movements);
 
         /* Create Query 4 Job */
-        JobTracker jobTracker = hz.getJobTracker("Query4");
+        JobTracker jobTracker = hz.getJobTracker("Query5");
 
         /* Get movements group amount
          * Key is oaci origin, Value is amount of landings */
@@ -54,16 +51,17 @@ public class Query4 implements Query {
         printOutput(queryOutput);
     }
 
-    private Map<String, Integer> getLandingsAmount(JobTracker jobTracker, IList<Movement> hzMovement) throws InterruptedException, ExecutionException {
+    private Map<String, Integer> getLandingsAmount(JobTracker jobTracker, IList<Movement> hzMovement)
+            throws InterruptedException, ExecutionException {
         /* Key is collection name */
         KeyValueSource<String, Movement> source = KeyValueSource.fromList(hzMovement);
         Job<String, Movement> job = jobTracker.newJob(source);
 
         /* Run map reduce */
         ICompletableFuture<Map<String, Integer>> future = job
-                .mapper(new LandingsAmountMapper(destinationOaci))
-                .combiner(new LandingsAmountCombinerFactory())
-                .reducer(new LandingsAmountReducerFactory())
+                .mapper(new InternationalMapper())
+                //.combiner(new LandingsAmountCombinerFactory())
+                .reducer(new InternationalReducerFactory())
                 .submit();
 
         /* Get map reduce output */
@@ -78,9 +76,9 @@ public class Query4 implements Query {
         }
 
         queryOutput.sort((QueryOutputRow o1, QueryOutputRow o2) -> {
-            int landingsAmountCmp = o2.landingsAmount - o1.landingsAmount;
+            int landingsAmountCmp = o2.percentage - o1.percentage;
             if(landingsAmountCmp == 0) {
-                return o1.oaciOrigin.compareTo(o2.oaciOrigin);
+                return o1.iata.compareTo(o2.iata);
             }
             return landingsAmountCmp;
         });
@@ -89,27 +87,27 @@ public class Query4 implements Query {
     }
 
     private void printOutput(List<QueryOutputRow> queryOutput) {
-        System.out.println("Oaci;Aterrizajes");
-        printer.appendToFile("Oaci;Aterrizajes\n");
+        System.out.println("IATA;Porcentaje");
+        printer.appendToFile("IATA;Porcentaje\n");
 
-        for(int i = 0; i < queryOutput.size() && i < numberOfResults; i++) {
+        for(int i = 0; i < numberOfResults; i++) {
             System.out.println(queryOutput.get(i));
             printer.appendToFile(queryOutput.get(i)+"\n");
         }
     }
 
     private class QueryOutputRow {
-        private final String oaciOrigin;
-        private final int landingsAmount;
+        private final String iata;
+        private final int percentage;
 
-        public QueryOutputRow(String oaciOrigin, int landingsAmount) {
-            this.oaciOrigin = oaciOrigin;
-            this.landingsAmount = landingsAmount;
+        public QueryOutputRow(String iata, int percentage) {
+            this.iata = iata;
+            this.percentage = percentage;
         }
 
         @Override
         public String toString() {
-            return oaciOrigin + ";" + landingsAmount;
+            return iata + ";" + percentage;
         }
     }
 }

@@ -10,6 +10,7 @@ import ar.edu.itba.pod.client.Queries.Query1.Query1;
 import ar.edu.itba.pod.client.Queries.Query2.Query2;
 import ar.edu.itba.pod.client.Queries.Query3.Query3;
 import ar.edu.itba.pod.client.Queries.Query4.Query4;
+import ar.edu.itba.pod.client.Queries.Query5.Query5;
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.core.HazelcastInstance;
 import org.slf4j.Logger;
@@ -71,6 +72,7 @@ public class Client {
 
     private static Query getQuery(int queryNumber, Printer p, List<Airport> airports, List<Movement> movements, HazelcastInstance hz){
         Query query;
+        int n;
 
         switch (queryNumber){
             case 1:
@@ -85,10 +87,13 @@ public class Client {
                 break;
             case 4:
                 String oaci = Optional.ofNullable(System.getProperty("oaci")).orElseThrow(IllegalArgumentException::new);
-                int n =  Integer.parseInt(System.getProperty("n"));
+                n = Integer.parseInt(System.getProperty("n"));
                 query = new Query4(movements,hz,oaci,n,p);
                 break;
-
+            case 5:
+                n =  Integer.parseInt(System.getProperty("n"));
+                query = new Query5(movements,hz,n,p);
+                break;
             default:
                 throw new IllegalArgumentException("There is no query number " + queryNumber);
         }
