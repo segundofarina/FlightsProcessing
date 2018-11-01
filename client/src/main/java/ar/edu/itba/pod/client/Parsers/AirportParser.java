@@ -21,38 +21,12 @@ public class AirportParser implements CsvParser {
 
     @Override
     public void loadFile(Path path) {
-        //List<String> lines = null;
-        /*try {
-            lines = Files.readAllLines(path);
-        } catch (IOException e) {
-            System.out.println("Unable to load airports");
-        }*/
-
         try(Stream<String> stream = Files.lines(path)) {
             stream.skip(1).forEach(this::getAirportFrom);
         } catch (IOException e) {
             System.out.println("Unable to load airports");
         }
-
-        //return getAirportsFrom(lines);
     }
-/*
-    private List<Airport> getAirportsFrom(List<String> lines) {
-        List<Airport> airports = new ArrayList<>();
-
-        if(lines == null) {
-            return airports;
-        }
-
-        /* Avoid first line of headers *//*
-        lines.remove(0);
-
-        for(String line : lines) {
-            airports.add(getAirportFrom(line));
-        }
-
-        return airports;
-    }*/
 
     private void getAirportFrom(String line) {
         String[] column = line.split(";");
@@ -63,13 +37,6 @@ public class AirportParser implements CsvParser {
             localAirports.clear();
         }
     }
-
-    /*private Optional<String> optionalFromStr(String s) {
-        if(s.equals("")) {
-            return Optional.empty();
-        }
-        return Optional.ofNullable(s);
-    }*/
 
     private String optionalFromStr(String s) {
         if(s.equals("")) {

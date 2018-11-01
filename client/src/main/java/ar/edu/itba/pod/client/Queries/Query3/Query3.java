@@ -20,11 +20,11 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 public class Query3 implements Query {
-    private List<Movement> movements;
+    private IList<Movement> movements;
     private HazelcastInstance hz;
     private Printer printer;
 
-    public Query3(List<Movement> movements, HazelcastInstance hz,Printer printer) {
+    public Query3(IList<Movement> movements, HazelcastInstance hz,Printer printer) {
         this.movements = movements;
         this.hz = hz;
         this.printer = printer;
@@ -32,16 +32,12 @@ public class Query3 implements Query {
 
     @Override
     public void run() throws InterruptedException, ExecutionException {
-        /* Add movements list to hazelcast */
-        IList<Movement> hzMovement = hz.getList("movements");
-        hzMovement.addAll(movements);
-
         /* Create Query 3 Job */
         JobTracker jobTracker = hz.getJobTracker("Query3");
 
         /* Get movements group amount
          * Key is oaci tuple, Value is amount of movements */
-        Map<OaciTuple, Integer> airportMovements = getAirportMovements(jobTracker, hzMovement);
+        Map<OaciTuple, Integer> airportMovements = getAirportMovements(jobTracker, movements);
 
         /* Get query output */
         List<QueryOutputRow> queryOutput = getQueryOutput(airportMovements);

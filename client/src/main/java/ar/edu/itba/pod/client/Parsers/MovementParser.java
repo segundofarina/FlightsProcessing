@@ -25,40 +25,13 @@ public class MovementParser implements CsvParser {
 
     @Override
     public void loadFile(Path path) {
-        /*List<String> lines = null;
-
-        try {
-             lines = Files.readAllLines(path, StandardCharsets.ISO_8859_1);
-        } catch (IOException e) {
-            System.out.println("Unable to load movements");
-        }
-
-        return getMovementsFrom(lines);*/
-
         try(Stream<String> stream = Files.lines(path, StandardCharsets.ISO_8859_1)) {
             stream.skip(1).forEach(this::getMovementFrom);
         } catch (IOException e) {
             System.out.println("Unable to load movements");
         }
     }
-/*
-    private List<Movement> getMovementsFrom(List<String> lines) {
-        List<Movement> movements = new ArrayList<>();
 
-        if(lines == null) {
-            return movements;
-        }
-
-        /* Avoid first line of headers *//*
-        lines.remove(0);
-
-        for(String line : lines) {
-            movements.add(getMovementFrom(line));
-        }
-
-        return movements;
-    }
-*/
     private void getMovementFrom(String line) {
         String[] column = line.split(";");
         localMovements.add(new Movement(getFlightType(column[3]), getMovementType(column[4]), column[5], column[6]));
@@ -68,16 +41,6 @@ public class MovementParser implements CsvParser {
             localMovements.clear();
         }
     }
-
-    /*private Optional<FlightType> getFlightType(String s) {
-        if(s.equalsIgnoreCase("cabotaje")) {
-            return Optional.of(FlightType.LOCAL);
-        }
-        if(s.equalsIgnoreCase("internacional")) {
-            return Optional.of(FlightType.INTERNATIONAL);
-        }
-        return Optional.empty();
-    }*/
 
     private Optional<FlightType> getFlightType(String s) {
         if(s.equalsIgnoreCase("cabotaje")) {

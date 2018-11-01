@@ -19,13 +19,13 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 public class Query4 implements Query {
-    private final List<Movement> movements;
+    private final IList<Movement> movements;
     private final HazelcastInstance hz;
     private final String destinationOaci;
     private final int numberOfResults;
     private final Printer printer;
 
-    public Query4(List<Movement> movements, HazelcastInstance hz, String destinationOaci, int numberOfResults, Printer printer) {
+    public Query4(IList<Movement> movements, HazelcastInstance hz, String destinationOaci, int numberOfResults, Printer printer) {
         this.movements = movements;
         this.hz = hz;
         this.destinationOaci = destinationOaci;
@@ -36,16 +36,12 @@ public class Query4 implements Query {
 
     @Override
     public void run() throws InterruptedException, ExecutionException {
-        /* Add movements list to hazelcast */
-        IList<Movement> hzMovement = hz.getList("movements");
-        hzMovement.addAll(movements);
-
         /* Create Query 4 Job */
         JobTracker jobTracker = hz.getJobTracker("Query4");
 
         /* Get movements group amount
          * Key is oaci origin, Value is amount of landings */
-        Map<String, Integer> landingsAmount = getLandingsAmount(jobTracker, hzMovement);
+        Map<String, Integer> landingsAmount = getLandingsAmount(jobTracker, movements);
 
         /* Get query output */
         List<QueryOutputRow> queryOutput = getQueryOutput(landingsAmount);

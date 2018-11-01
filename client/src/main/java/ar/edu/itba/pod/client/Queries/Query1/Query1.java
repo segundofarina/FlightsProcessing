@@ -32,10 +32,6 @@ public class Query1 implements Query {
 
     @Override
     public void run() throws InterruptedException, ExecutionException {
-        /* Add movements list to hazelcast *//*
-        IList<Movement> hzMovement = hz.getList("movements");
-        hzMovement.addAll(movements);*/
-
         /* Create Query 1 Job */
         JobTracker jobTracker = hz.getJobTracker("Query1");
 
@@ -53,9 +49,6 @@ public class Query1 implements Query {
 
         /* Get map reduce output */
         Map<String, Integer> oaciMovementsMap = future.get();
-
-        /* Remove Movements Map from Hazelcast */
-        //hzMovement.destroy();
 
         /* Get complete and sorted output */
         List<QueryOutputRow> queryOutput = generateQueryOutput(oaciMovementsMap);

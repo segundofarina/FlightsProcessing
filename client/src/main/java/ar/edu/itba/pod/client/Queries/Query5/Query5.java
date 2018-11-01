@@ -21,13 +21,13 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 public class Query5 implements Query {
-    private final List<Movement> movements;
-    private final List<Airport> airports;
+    private final IList<Movement> movements;
+    private final IList<Airport> airports;
     private final HazelcastInstance hz;
     private final Printer printer;
     private final int numberOfResults;
 
-    public Query5(List<Movement> movements, List<Airport> airports, HazelcastInstance hz, int n, Printer printer) {
+    public Query5(IList<Movement> movements, IList<Airport> airports, HazelcastInstance hz, int n, Printer printer) {
         this.movements = movements;
         this.airports = airports;
         this.hz = hz;
@@ -37,10 +37,6 @@ public class Query5 implements Query {
 
     @Override
     public void run() throws InterruptedException, ExecutionException {
-        /* Add movements list to hazelcast */
-        IList<Movement> hzMovement = hz.getList("movements");
-        hzMovement.addAll(movements);
-
         /* Create Query 5 Job */
         JobTracker jobTracker = hz.getJobTracker("Query5");
 
@@ -49,7 +45,7 @@ public class Query5 implements Query {
 
         /* Get movements group amount
          * Key is iata code, Value is percentage of international flights */
-        Map<String, Integer> internationalFlights = getInternationalFlights(jobTracker, hzMovement, oaciIataMap);
+        Map<String, Integer> internationalFlights = getInternationalFlights(jobTracker, movements, oaciIataMap);
 
         /* Get query output */
         List<QueryOutputRow> queryOutput = getQueryOutput(internationalFlights);
