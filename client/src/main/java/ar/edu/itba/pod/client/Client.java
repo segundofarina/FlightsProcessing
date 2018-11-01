@@ -34,8 +34,10 @@ public class Client {
 
         Printer times = new Printer(params.getTimeOutPath());
         Printer out =  new Printer(params.getOutPath());
+
         /* Load csv to list */
         times.log("Inicio de lectura del archivo");
+
         CsvParser<Airport> airportCsvParser = new AirportParser();
         List<Airport> airports = airportCsvParser.loadFile(Paths.get(params.getAirportsInPath()));
 
@@ -50,17 +52,19 @@ public class Client {
         /* Get Query */
         Query query = getQuery(params.getQueryNumber(), out, airports, movements, hz);
 
-
         /* Run Query */
         times.log("Inicio del trabajo Map/reduce");
+
         query.run();
+
         times.log("Fin del trabajo Map/reduce");
 
         /* Shutdown this Hazelcast client */
         hz.shutdown();
+
+        /* Close file printers */
         times.close();
         out.close();
-
     }
 
     private static void logParmsLoaded(ParamLoader params) {
@@ -71,7 +75,6 @@ public class Client {
         logger.info("timeOutPath: " + params.getTimeOutPath());
     }
 
-
     private static Query getQuery(int queryNumber, Printer p, List<Airport> airports, List<Movement> movements, HazelcastInstance hz){
         Query query;
         int n,min;
@@ -79,11 +82,10 @@ public class Client {
         switch (queryNumber){
             case 1:
                 query = new Query1(airports, movements, hz, p);
-                break ;
+                break;
             case 2:
                 query = new Query2(movements, hz, p);
                 break;
-
             case 3:
                 query = new Query3(movements, hz, p);
                 break;
@@ -94,7 +96,7 @@ public class Client {
                 break;
             case 5:
                 n = Integer.parseInt(Optional.ofNullable(System.getProperty("n")).orElseThrow(IllegalArgumentException::new));
-                query = new Query5(movements, hz, n, p);
+                query = new Query5(movements, airports,hz, n, p);
                 break;
             case 6:
                 min = Integer.parseInt(Optional.ofNullable(System.getProperty("min")).orElseThrow(IllegalArgumentException::new));
