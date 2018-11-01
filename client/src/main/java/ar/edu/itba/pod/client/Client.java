@@ -19,19 +19,25 @@ import java.util.concurrent.ExecutionException;
 public class Client {
     private static Logger logger = LoggerFactory.getLogger(Client.class);
 
+
     public static void main(String[] args) throws InterruptedException, ExecutionException {
         logger.info("tp Client Starting ...");
 
         // Load params
 
-        Printer times = new Printer("times.txt");
+        ParamLoader params = new ParamLoader();
+
+        logParmsLoaded(params);
+
+        Printer times = new Printer(params.getTimeOutPath());
+        Printer out =  new Printer(params.getOutPath());
         /* Load csv to list */
         times.log("Inicio de lectura del archivo");
         CsvParser<Airport> airportCsvParser = new AirportParser();
-        List<Airport> airports = airportCsvParser.loadFile(Paths.get("aeropuertos.csv"));
+        List<Airport> airports = airportCsvParser.loadFile(Paths.get(params.getAirportsInPath()));
 
         CsvParser<Movement> movementCsvParser = new MovementParser();
-        List<Movement> movements = movementCsvParser.loadFile(Paths.get("movimientos.csv"));
+        List<Movement> movements = movementCsvParser.loadFile(Paths.get(params.getMovementsInPath()));
 
         times.log("Fin de lectura del archivo");
 
@@ -39,8 +45,9 @@ public class Client {
         /* Connect client to hazelcast */
         HazelcastInstance hz = HazelcastClient.newHazelcastClient();
 
+
         /* Get Query */
-        Query query = new Query1(airports, movements, hz);
+        Query query = getQuery(params.getQueryNumber(),out,airports, movements, hz);
 
         /* Run Query */
         times.log("Inicio del trabajo Map/reduce");
@@ -50,5 +57,33 @@ public class Client {
         /* Shutdown this Hazelcast client */
         hz.shutdown();
         times.close();
+        out.close();
+
     }
+
+    private static void logParmsLoaded(ParamLoader params) {
+        logger.info("query: "+params.getQueryNumber());  
+        logger.info("movementsInPath: "+params.getMovementsInPath());
+        logger.info("airportsInPath: "+params.getAirportsInPath());
+        logger.info("outPath: "+params.getOutPath());
+        logger.info("timeOutPath: "+params.getTimeOutPath());
+
+    }
+
+
+    private static Query getQuery(int queryNumber,Printer p ,List<Airport> airports, List<Movement> movements, HazelcastInstance hz){
+        Query query;
+
+        switch (queryNumber){
+
+            case 1:
+                query = new Query1(airports,movements,hz,p);
+                break ;
+                default:
+                    throw new IllegalArgumentException("There is no query number "+queryNumber);
+
+        }
+        return query;
+    }
+
 }
