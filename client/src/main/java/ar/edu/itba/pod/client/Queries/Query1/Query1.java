@@ -18,12 +18,12 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 public class Query1 implements Query {
-    private List<Airport> airports;
-    private List<Movement> movements;
+    private IList<Airport> airports;
+    private IList<Movement> movements;
     private HazelcastInstance hz;
     private Printer printer;
 
-    public Query1(List<Airport> airports, List<Movement> movements, HazelcastInstance hz,Printer printer) {
+    public Query1(IList<Airport> airports, IList<Movement> movements, HazelcastInstance hz,Printer printer) {
         this.airports = airports;
         this.movements = movements;
         this.hz = hz;
@@ -32,15 +32,15 @@ public class Query1 implements Query {
 
     @Override
     public void run() throws InterruptedException, ExecutionException {
-        /* Add movements list to hazelcast */
+        /* Add movements list to hazelcast *//*
         IList<Movement> hzMovement = hz.getList("movements");
-        hzMovement.addAll(movements);
+        hzMovement.addAll(movements);*/
 
         /* Create Query 1 Job */
         JobTracker jobTracker = hz.getJobTracker("Query1");
 
         /* Key is collection name */
-        KeyValueSource<String, Movement> source = KeyValueSource.fromList(hzMovement);
+        KeyValueSource<String, Movement> source = KeyValueSource.fromList(movements);
         Job<String, Movement> job = jobTracker.newJob(source);
 
         /* Run map reduce
@@ -55,7 +55,7 @@ public class Query1 implements Query {
         Map<String, Integer> oaciMovementsMap = future.get();
 
         /* Remove Movements Map from Hazelcast */
-        hzMovement.destroy();
+        //hzMovement.destroy();
 
         /* Get complete and sorted output */
         List<QueryOutputRow> queryOutput = generateQueryOutput(oaciMovementsMap);

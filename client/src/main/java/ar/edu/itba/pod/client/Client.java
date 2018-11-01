@@ -14,6 +14,7 @@ import ar.edu.itba.pod.client.Queries.Query5.Query5;
 import ar.edu.itba.pod.client.Queries.Query6.Query6;
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.IList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,22 +36,26 @@ public class Client {
         Printer times = new Printer(params.getTimeOutPath());
         Printer out =  new Printer(params.getOutPath());
 
-        /* Load csv to list */
-        times.log("Inicio de lectura del archivo");
-
-        CsvParser<Airport> airportCsvParser = new AirportParser();
-        List<Airport> airports = airportCsvParser.loadFile(Paths.get(params.getAirportsInPath()));
-
-        CsvParser<Movement> movementCsvParser = new MovementParser();
-        List<Movement> movements = movementCsvParser.loadFile(Paths.get(params.getMovementsInPath()));
-
-        times.log("Fin de lectura del archivo");
-
         /* Connect client to hazelcast */
         HazelcastInstance hz = HazelcastClient.newHazelcastClient();
 
+        /* Load csv to list */
+        times.log("Inicio de lectura del archivo");
+
+        IList<Airport> airportsHz = hz.getList("airports");
+
+        CsvParser airportCsvParser = new AirportParser(airportsHz);
+        airportCsvParser.loadFile(Paths.get(params.getAirportsInPath()));
+
+        IList<Movement> movementsHz = hz.getList("movements");
+
+        CsvParser movementCsvParser = new MovementParser(movementsHz);
+        movementCsvParser.loadFile(Paths.get(params.getMovementsInPath()));
+
+        times.log("Fin de lectura del archivo");
+
         /* Get Query */
-        Query query = getQuery(params.getQueryNumber(), out, airports, movements, hz);
+        Query query = getQuery(params.getQueryNumber(), out, airportsHz, movementsHz, hz);
 
         /* Run Query */
         times.log("Inicio del trabajo Map/reduce");
@@ -58,6 +63,10 @@ public class Client {
         query.run();
 
         times.log("Fin del trabajo Map/reduce");
+
+        /* Remove lists from hz */
+        airportsHz.destroy();
+        movementsHz.destroy();
 
         /* Shutdown this Hazelcast client */
         hz.shutdown();
@@ -75,7 +84,7 @@ public class Client {
         logger.info("timeOutPath: " + params.getTimeOutPath());
     }
 
-    private static Query getQuery(int queryNumber, Printer p, List<Airport> airports, List<Movement> movements, HazelcastInstance hz){
+    private static Query getQuery(int queryNumber, Printer p, IList<Airport> airports, IList<Movement> movements, HazelcastInstance hz){
         Query query;
         int n;
 

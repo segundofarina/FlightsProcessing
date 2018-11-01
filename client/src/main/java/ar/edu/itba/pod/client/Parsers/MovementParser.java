@@ -3,6 +3,7 @@ package ar.edu.itba.pod.client.Parsers;
 import ar.edu.itba.pod.FlightType;
 import ar.edu.itba.pod.Movement;
 import ar.edu.itba.pod.MovementType;
+import com.hazelcast.core.IList;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -11,11 +12,18 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
-public class MovementParser implements CsvParser<Movement> {
+public class MovementParser implements CsvParser {
+    private final IList<Movement> movements;
+
+    public MovementParser(IList<Movement> movements) {
+        this.movements = movements;
+    }
+
     @Override
-    public List<Movement> loadFile(Path path) {
-        List<String> lines = null;
+    public void loadFile(Path path) {
+        /*List<String> lines = null;
 
         try {
              lines = Files.readAllLines(path, StandardCharsets.ISO_8859_1);
@@ -23,9 +31,15 @@ public class MovementParser implements CsvParser<Movement> {
             System.out.println("Unable to load movements");
         }
 
-        return getMovementsFrom(lines);
-    }
+        return getMovementsFrom(lines);*/
 
+        try(Stream<String> stream = Files.lines(path, StandardCharsets.ISO_8859_1)) {
+            stream.skip(1).forEach(this::getMovementFrom);
+        } catch (IOException e) {
+            System.out.println("Unable to load movements");
+        }
+    }
+/*
     private List<Movement> getMovementsFrom(List<String> lines) {
         List<Movement> movements = new ArrayList<>();
 
@@ -33,7 +47,7 @@ public class MovementParser implements CsvParser<Movement> {
             return movements;
         }
 
-        /* Avoid first line of headers */
+        /* Avoid first line of headers *//*
         lines.remove(0);
 
         for(String line : lines) {
@@ -42,10 +56,10 @@ public class MovementParser implements CsvParser<Movement> {
 
         return movements;
     }
-
-    private Movement getMovementFrom(String line) {
+*/
+    private void getMovementFrom(String line) {
         String[] column = line.split(";");
-        return new Movement(getFlightType(column[3]), getMovementType(column[4]), column[5], column[6]);
+        movements.add(new Movement(getFlightType(column[3]), getMovementType(column[4]), column[5], column[6]));
     }
 
     /*private Optional<FlightType> getFlightType(String s) {
