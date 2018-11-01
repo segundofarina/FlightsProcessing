@@ -9,6 +9,7 @@ import ar.edu.itba.pod.client.Queries.Query;
 import ar.edu.itba.pod.client.Queries.Query1.Query1;
 import ar.edu.itba.pod.client.Queries.Query2.Query2;
 import ar.edu.itba.pod.client.Queries.Query3.Query3;
+import ar.edu.itba.pod.client.Queries.Query4.Query4;
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.core.HazelcastInstance;
 import org.slf4j.Logger;
@@ -24,9 +25,7 @@ public class Client {
 
     public static void main(String[] args) throws InterruptedException, ExecutionException {
         logger.info("tp Client Starting ...");
-
-        // Load params
-
+        
         ParamLoader params = new ParamLoader();
 
         logParmsLoaded(params);
@@ -43,14 +42,11 @@ public class Client {
 
         times.log("Fin de lectura del archivo");
 
-
         /* Connect client to hazelcast */
         HazelcastInstance hz = HazelcastClient.newHazelcastClient();
 
-
         /* Get Query */
         Query query = getQuery(params.getQueryNumber(), out, airports, movements, hz);
-
 
         /* Run Query */
         times.log("Inicio del trabajo Map/reduce");
@@ -70,7 +66,6 @@ public class Client {
         logger.info("airportsInPath: " + params.getAirportsInPath());
         logger.info("outPath: " + params.getOutPath());
         logger.info("timeOutPath: " + params.getTimeOutPath());
-
     }
 
 
@@ -79,17 +74,16 @@ public class Client {
 
         switch (queryNumber){
             case 1:
-                query = new Query1(airports,movements,hz,p);
+                query = new Query1(airports, movements, hz, p);
                 break ;
-
             case 2:
-               query = new Query2(movements, hz,p);
+               query = new Query2(movements, hz, p);
                 break;
-                default:
-                    throw new IllegalArgumentException("There is no query number "+queryNumber);
 
+            default:
+                throw new IllegalArgumentException("There is no query number " + queryNumber);
         }
-        
+
         return query;
     }
 
