@@ -16,9 +16,11 @@ import java.util.stream.Stream;
 
 public class MovementParser implements CsvParser {
     private final IList<Movement> movements;
+    private final List<Movement> localMovements;
 
     public MovementParser(IList<Movement> movements) {
         this.movements = movements;
+        this.localMovements = new ArrayList<>();
     }
 
     @Override
@@ -59,7 +61,12 @@ public class MovementParser implements CsvParser {
 */
     private void getMovementFrom(String line) {
         String[] column = line.split(";");
-        movements.add(new Movement(getFlightType(column[3]), getMovementType(column[4]), column[5], column[6]));
+        localMovements.add(new Movement(getFlightType(column[3]), getMovementType(column[4]), column[5], column[6]));
+
+        if(localMovements.size() > 1000) {
+            movements.addAll(localMovements);
+            localMovements.clear();
+        }
     }
 
     /*private Optional<FlightType> getFlightType(String s) {
