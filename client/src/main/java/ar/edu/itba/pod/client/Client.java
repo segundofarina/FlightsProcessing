@@ -85,6 +85,10 @@ public class Client {
             case 2:
                query = new Query2(movements, hz,p);
                 break;
+
+            case 3:
+                query = new Query3(movements,hz,p);
+                break;
                 default:
                     throw new IllegalArgumentException("There is no query number "+queryNumber);
 
