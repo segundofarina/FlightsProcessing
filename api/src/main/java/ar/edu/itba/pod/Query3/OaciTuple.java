@@ -5,16 +5,11 @@ import com.hazelcast.nio.ObjectDataOutput;
 import com.hazelcast.nio.serialization.DataSerializable;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.Objects;
 
 public class OaciTuple implements DataSerializable {
     private String originOaci;
     private String destinationOaci;
-
-    public OaciTuple(){
-
-    }
 
     public OaciTuple(String originOaci, String destiantionOaci) {
         this.originOaci = originOaci;

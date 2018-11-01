@@ -11,6 +11,7 @@ import ar.edu.itba.pod.client.Queries.Query2.Query2;
 import ar.edu.itba.pod.client.Queries.Query3.Query3;
 import ar.edu.itba.pod.client.Queries.Query4.Query4;
 import ar.edu.itba.pod.client.Queries.Query5.Query5;
+import ar.edu.itba.pod.client.Queries.Query6.Query6;
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.core.HazelcastInstance;
 import org.slf4j.Logger;
@@ -48,6 +49,7 @@ public class Client {
 
         /* Get Query */
         Query query = getQuery(params.getQueryNumber(), out, airports, movements, hz);
+
 
         /* Run Query */
         times.log("Inicio del trabajo Map/reduce");

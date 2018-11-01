@@ -41,7 +41,7 @@ public class AirportParser implements CsvParser<Airport> {
 
     private Airport getAirportFrom(String line) {
         String[] column = line.split(";");
-        return new Airport(optionalFromStr(column[1]), optionalFromStr(column[2]), removeQuotes(column[4]), column[21]);
+        return new Airport(optionalFromStr(column[1]), optionalFromStr(column[2]), removeQuotes(column[4]), removeQuotes(column[21]));
     }
 
     /*private Optional<String> optionalFromStr(String s) {
