@@ -12,9 +12,11 @@ import java.util.stream.Stream;
 
 public class AirportParser implements CsvParser {
     private final IList<Airport> airportsHz;
+    private final List<Airport> localAirports;
 
     public AirportParser(IList<Airport> airportsHz) {
         this.airportsHz = airportsHz;
+        this.localAirports = new ArrayList<>();
     }
 
     @Override
@@ -54,7 +56,12 @@ public class AirportParser implements CsvParser {
 
     private void getAirportFrom(String line) {
         String[] column = line.split(";");
-        airportsHz.add(new Airport(optionalFromStr(column[1]), optionalFromStr(column[2]), removeQuotes(column[4]), removeQuotes(column[21])));
+        localAirports.add(new Airport(optionalFromStr(column[1]), optionalFromStr(column[2]), removeQuotes(column[4]), removeQuotes(column[21])));
+
+        if(localAirports.size() > 1000) {
+            airportsHz.addAll(localAirports);
+            localAirports.clear();
+        }
     }
 
     /*private Optional<String> optionalFromStr(String s) {
