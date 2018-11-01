@@ -5,6 +5,7 @@ import ar.edu.itba.pod.Movement;
 import ar.edu.itba.pod.Query1.MovementsCombinerFactory;
 import ar.edu.itba.pod.Query1.MovementsReducerFactory;
 import ar.edu.itba.pod.Query1.MovementsMapper;
+import ar.edu.itba.pod.client.Printer;
 import ar.edu.itba.pod.client.Queries.Query;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.ICompletableFuture;
@@ -20,11 +21,13 @@ public class Query1 implements Query {
     private List<Airport> airports;
     private List<Movement> movements;
     private HazelcastInstance hz;
+    private Printer printer;
 
-    public Query1(List<Airport> airports, List<Movement> movements, HazelcastInstance hz) {
+    public Query1(List<Airport> airports, List<Movement> movements, HazelcastInstance hz,Printer printer) {
         this.airports = airports;
         this.movements = movements;
         this.hz = hz;
+        this.printer = printer;
     }
 
     @Override
@@ -83,9 +86,10 @@ public class Query1 implements Query {
 
     private void printOutput(List<QueryOutputRow> queryOutput) { // THIS SHOULD PRINT TO EXTERNAL FILE
         System.out.println("OACI;Denominacion;Movimientos");
-
+        printer.appendToFile("OACI;Denominacion;Movimientos\n");
         for(QueryOutputRow row : queryOutput) {
             System.out.println(row);
+            printer.appendToFile(row+"\n");
         }
     }
 
