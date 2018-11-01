@@ -7,8 +7,7 @@ import com.hazelcast.mapreduce.Mapper;
 
 public class InternationalMapper implements Mapper<String, Movement, String, Integer> {
 
-    public InternationalMapper() {
-    }
+
 
     @Override
     public void map(String s, Movement movement, Context<String, Integer> context) {

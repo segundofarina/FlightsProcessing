@@ -90,7 +90,7 @@ public class Query5 implements Query {
         System.out.println("IATA;Porcentaje");
         printer.appendToFile("IATA;Porcentaje\n");
 
-        for(int i = 0; i < numberOfResults; i++) {
+        for(int i = 0; i < numberOfResults && i< queryOutput.size(); i++) {
             System.out.println(queryOutput.get(i));
             printer.appendToFile(queryOutput.get(i)+"\n");
         }

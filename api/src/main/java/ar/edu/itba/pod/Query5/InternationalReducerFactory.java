@@ -10,8 +10,8 @@ public class InternationalReducerFactory implements ReducerFactory<String, Integ
     }
 
     private class InternationalReducer extends Reducer<Integer, Integer> {
-        private volatile int sum;
-        private int total;
+        private volatile double sum;
+        private double total;
 
         @Override
         public void beginReduce() {
@@ -27,7 +27,7 @@ public class InternationalReducerFactory implements ReducerFactory<String, Integ
 
         @Override
         public Integer finalizeReduce() {
-            return (int)((double)sum/(double)total*100);
+            return (int)(sum/total*100);
         }
     }
 }
