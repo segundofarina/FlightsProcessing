@@ -63,7 +63,7 @@ public class MovementParser implements CsvParser {
         String[] column = line.split(";");
         localMovements.add(new Movement(getFlightType(column[3]), getMovementType(column[4]), column[5], column[6]));
 
-        if(localMovements.size() > 1000) {
+        if(localMovements.size() > 100) {
             movements.addAll(localMovements);
             localMovements.clear();
         }

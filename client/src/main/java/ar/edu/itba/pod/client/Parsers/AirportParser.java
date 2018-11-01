@@ -58,7 +58,7 @@ public class AirportParser implements CsvParser {
         String[] column = line.split(";");
         localAirports.add(new Airport(optionalFromStr(column[1]), optionalFromStr(column[2]), removeQuotes(column[4]), removeQuotes(column[21])));
 
-        if(localAirports.size() > 1000) {
+        if(localAirports.size() > 100) {
             airportsHz.addAll(localAirports);
             localAirports.clear();
         }
