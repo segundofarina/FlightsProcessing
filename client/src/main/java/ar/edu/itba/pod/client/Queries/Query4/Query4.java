@@ -91,7 +91,7 @@ public class Query4 implements Query {
     private void printOutput(List<QueryOutputRow> queryOutput) {
         System.out.println("Oaci;Aterrizajes");
 
-        for(int i = 0; i < numberOfResults; i++) {
+        for(int i = 0; i < queryOutput.size() && i < numberOfResults; i++) {
             System.out.println(queryOutput.get(i));
         }
     }
