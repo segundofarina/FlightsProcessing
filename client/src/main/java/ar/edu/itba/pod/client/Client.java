@@ -7,6 +7,7 @@ import ar.edu.itba.pod.client.Parsers.CsvParser;
 import ar.edu.itba.pod.client.Parsers.MovementParser;
 import ar.edu.itba.pod.client.Queries.Query;
 import ar.edu.itba.pod.client.Queries.Query1.Query1;
+import ar.edu.itba.pod.client.Queries.Query2.Query2;
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.core.HazelcastInstance;
 import org.slf4j.Logger;
@@ -49,6 +50,9 @@ public class Client {
         /* Get Query */
         Query query = getQuery(params.getQueryNumber(),out,airports, movements, hz);
 
+
+
+
         /* Run Query */
         times.log("Inicio del trabajo Map/reduce");
         query.run();
@@ -79,6 +83,10 @@ public class Client {
             case 1:
                 query = new Query1(airports,movements,hz,p);
                 break ;
+
+            case 2:
+               query = new Query2(movements, hz,p);
+                break;
                 default:
                     throw new IllegalArgumentException("There is no query number "+queryNumber);
 

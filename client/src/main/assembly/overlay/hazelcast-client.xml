@@ -9,8 +9,8 @@
     </group>
     <network>
         <cluster-members>
-            <address>10.17.69.70:5701</address>
-            <address>10.17.69.123:5701</address>
+            <address>127.0.0.1:5701</address>
+            <address>127.0.0.1:5702</address>
         </cluster-members>
     </network>
 </hazelcast-client>

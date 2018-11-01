@@ -54,6 +54,9 @@ public class Query1 implements Query {
         /* Get map reduce output */
         Map<String, Integer> oaciMovementsMap = future.get();
 
+        /* Remove Movements Map from Hazelcast */
+        hzMovement.destroy();
+
         /* Get complete and sorted output */
         List<QueryOutputRow> queryOutput = generateQueryOutput(oaciMovementsMap);
 

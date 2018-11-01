@@ -44,10 +44,9 @@
                 <multicast-port>54327</multicast-port>
             </multicast>
             <tcp-ip enabled="true">
-                <interface>10.17.69.70</interface>
+                <interface>127.0.0.1</interface>
                 <member-list>
-                    <member>10.17.69.70</member>
-                    <member>10.17.69.123</member>
+                    <member>127.0.0.1</member>
                 </member-list>
             </tcp-ip>
             <aws enabled="false">
@@ -64,7 +63,7 @@
             </aws>
         </join>
         <interfaces enabled="true">
-            <interface>10.17.69.70</interface>
+            <interface>127.0.0.*</interface>
         </interfaces>
         <ssl enabled="false"/>
         <socket-interceptor enabled="false"/>
@@ -130,7 +129,7 @@
             then all entries of the map will be copied to another JVM for
             fail-safety. 0 means no backup.
         -->
-        <backup-count>0</backup-count>
+        <backup-count>1</backup-count>
         <!--
             Number of async backups. 0 means no backup.
         -->
@@ -202,7 +201,7 @@
     </multimap>
 
     <list name="default">
-        <backup-count>0</backup-count>
+        <backup-count>1</backup-count>
     </list>
 
     <set name="default">
