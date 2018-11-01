@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class AirportParser implements CsvParser<Airport> {
 
@@ -44,19 +45,19 @@ public class AirportParser implements CsvParser<Airport> {
         return new Airport(optionalFromStr(column[1]), optionalFromStr(column[2]), removeQuotes(column[4]), removeQuotes(column[21]));
     }
 
-    /*private Optional<String> optionalFromStr(String s) {
+    private Optional<String> optionalFromStr(String s) {
         if(s.equals("")) {
             return Optional.empty();
         }
         return Optional.ofNullable(s);
-    }*/
-
-    private String optionalFromStr(String s) {
-        if(s.equals("")) {
-            return null;
-        }
-        return s;
     }
+
+//    private String optionalFromStr(String s) {
+//        if(s.equals("")) {
+//            return null;
+//        }
+//        return s;
+//    }
 
     private String removeQuotes(String s) {
         return s.replaceAll("^\"|\"$", "");

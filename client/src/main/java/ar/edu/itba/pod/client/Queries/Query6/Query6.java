@@ -68,9 +68,7 @@ public class Query6 implements Query {
         Map<String, String> oaciCityMap = new HashMap<>();
 
         for(Airport airport : airports) {
-            if(airport.getOaci() != null && airport.getCity() != null) {
-                oaciCityMap.put(airport.getOaci(), airport.getCity());
-            }
+            airport.getOaci().ifPresent(oaci -> oaciCityMap.put(oaci, airport.getCity()));
         }
 
         return oaciCityMap;

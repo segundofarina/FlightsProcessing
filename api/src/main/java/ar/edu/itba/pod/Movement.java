@@ -19,7 +19,6 @@ public class Movement implements DataSerializable {
 
     }
     public Movement(Optional<FlightType> flightType, MovementType movementType, String sourceOASI, String destinationOASI) {
-    //public Movement(FlightType flightType, MovementType movementType, String sourceOASI, String destinationOASI) {
         this.flightType = flightType;
         this.movementType = movementType;
         this.sourceOASI = sourceOASI;
@@ -27,7 +26,6 @@ public class Movement implements DataSerializable {
     }
 
     public Optional<FlightType> getFlightType() {
-    //public FlightType getFlightType() {
         return flightType;
     }
 

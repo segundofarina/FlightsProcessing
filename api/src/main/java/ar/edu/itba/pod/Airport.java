@@ -5,12 +5,11 @@ import com.hazelcast.nio.ObjectDataOutput;
 import com.hazelcast.nio.serialization.DataSerializable;
 
 import java.io.IOException;
+import java.util.Optional;
 
 public class Airport implements DataSerializable {
-    //private final Optional<String> oaci;
-    private String oaci;
-    //private final Optional<String> iata;
-    private String iata;
+    private Optional<String> oaci;
+    private Optional<String> iata;
     private String name;
     private String city;
 
@@ -18,21 +17,18 @@ public class Airport implements DataSerializable {
     public Airport(){
 
     }
-    //public Airport(Optional<String> oaci, Optional<String> iata, String name, String city) {
-    public Airport(String oaci, String iata, String name, String city) {
+    public Airport(Optional<String> oaci, Optional<String> iata, String name, String city) {
         this.oaci = oaci;
         this.iata = iata;
         this.name = name;
         this.city = city;
     }
 
-    //public Optional<String> getOaci() {
-    public String getOaci() {
-        return oaci;
+    public Optional<String> getOaci() {
+       return oaci;
     }
 
-    //public Optional<String> getIata() {
-    public String getIata() {
+    public Optional<String> getIata() {
         return iata;
     }
 
@@ -56,16 +52,16 @@ public class Airport implements DataSerializable {
 
     @Override
     public void writeData(ObjectDataOutput out) throws IOException {
-        out.writeUTF(oaci);
-        out.writeUTF(iata);
+        out.writeUTF(oaci.orElse("NULL"));
+        out.writeUTF(iata.orElse("NULL"));
         out.writeUTF(name);
         out.writeUTF(city);
     }
 
     @Override
     public void readData(ObjectDataInput in) throws IOException {
-        oaci = in.readUTF();
-        iata = in.readUTF();
+        oaci = Optional.of(in.readUTF()).filter(s -> !"NULL".equals(s));
+        iata = Optional.of(in.readUTF()).filter(s -> !"NULL".equals(s));
         name = in.readUTF();
         city = in.readUTF();
     }

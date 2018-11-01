@@ -97,9 +97,10 @@ public class Query1 implements Query {
         Map<String, String> oaciName = new HashMap<>();
 
         for(Airport airport : airports) {
-            if(airport.getOaci() != null) { // THIS SHOULD BE OPTIONAL
-                oaciName.put(airport.getOaci(), airport.getName());
-            }
+            airport.getOaci().ifPresent(oaci -> oaciName.put(oaci,airport.getName()));
+//            if(airport.getOaci() != null) { // THIS SHOULD BE OPTIONAL
+//                oaciName.put(airport.getOaci(), airport.getName());
+//            }
         }
 
         return oaciName;

@@ -98,7 +98,7 @@ public class Client {
                 break;
             case 6:
                 min = Integer.parseInt(Optional.ofNullable(System.getProperty("min")).orElseThrow(IllegalArgumentException::new));
-                query = new Query6(movements, airports, hz, min);
+                query = new Query6(movements, airports, hz, min, p);
                 break;
             default:
                 throw new IllegalArgumentException("There is no query number " + queryNumber);
