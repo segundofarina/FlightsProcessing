@@ -18,6 +18,7 @@ public class Airport implements DataSerializable {
     public Airport(){
 
     }
+
     //public Airport(Optional<String> oaci, Optional<String> iata, String name, String city) {
     public Airport(String oaci, String iata, String name, String city) {
         this.oaci = oaci;

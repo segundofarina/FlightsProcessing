@@ -1,6 +1,8 @@
 package ar.edu.itba.pod.client.Queries.Query5;
 
+import ar.edu.itba.pod.Airport;
 import ar.edu.itba.pod.Movement;
+import ar.edu.itba.pod.Query5.InternationalCombinerFactory;
 import ar.edu.itba.pod.Query5.InternationalMapper;
 import ar.edu.itba.pod.Query5.InternationalReducerFactory;
 import ar.edu.itba.pod.client.Printer;
@@ -13,23 +15,25 @@ import com.hazelcast.mapreduce.JobTracker;
 import com.hazelcast.mapreduce.KeyValueSource;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 public class Query5 implements Query {
     private final List<Movement> movements;
+    private final List<Airport> airports;
     private final HazelcastInstance hz;
     private final Printer printer;
     private final int numberOfResults;
 
-    public Query5(List<Movement> movements, HazelcastInstance hz,int n, Printer printer) {
+    public Query5(List<Movement> movements, List<Airport> airports, HazelcastInstance hz, int n, Printer printer) {
         this.movements = movements;
+        this.airports = airports;
         this.hz = hz;
         this.printer = printer;
-        this.numberOfResults=n;
+        this.numberOfResults = n;
     }
-
 
     @Override
     public void run() throws InterruptedException, ExecutionException {
@@ -40,27 +44,44 @@ public class Query5 implements Query {
         /* Create Query 5 Job */
         JobTracker jobTracker = hz.getJobTracker("Query5");
 
+        /* Generate oaci->iata map */
+        Map<String, String> oaciIataMap = getOaciIataMap(airports);
+
         /* Get movements group amount
-         * Key is oaci origin, Value is amount of landings */
-        Map<String, Integer> landingsAmount = getLandingsAmount(jobTracker, hzMovement);
+         * Key is iata code, Value is percentage of international flights */
+        Map<String, Integer> internationalFlights = getInternationalFlights(jobTracker, hzMovement, oaciIataMap);
 
         /* Get query output */
-        List<QueryOutputRow> queryOutput = getQueryOutput(landingsAmount);
+        List<QueryOutputRow> queryOutput = getQueryOutput(internationalFlights);
 
         /* Print query output */
         printOutput(queryOutput);
     }
 
-    private Map<String, Integer> getLandingsAmount(JobTracker jobTracker, IList<Movement> hzMovement)
+    private Map<String, String> getOaciIataMap(List<Airport> airports) {
+        /* Key is oaci, value is iata */
+        Map<String, String> oaciIataMap = new HashMap<>();
+
+        for(Airport airport : airports) {
+            if(airport.getOaci() != null && airport.getIata() != null) {
+                oaciIataMap.put(airport.getOaci(), airport.getIata());
+            }
+        }
+
+        return oaciIataMap;
+    }
+
+    private Map<String, Integer> getInternationalFlights(JobTracker jobTracker, IList<Movement> hzMovement, Map<String, String> oaciIataMap)
             throws InterruptedException, ExecutionException {
         /* Key is collection name */
         KeyValueSource<String, Movement> source = KeyValueSource.fromList(hzMovement);
         Job<String, Movement> job = jobTracker.newJob(source);
 
-        /* Run map reduce */
+        /* Run map reduce
+         * Key is iata code, value is percentage of international flights */
         ICompletableFuture<Map<String, Integer>> future = job
-                .mapper(new InternationalMapper())
-                //.combiner(new LandingsAmountCombinerFactory())
+                .mapper(new InternationalMapper(oaciIataMap))
+                .combiner(new InternationalCombinerFactory())
                 .reducer(new InternationalReducerFactory())
                 .submit();
 
@@ -68,19 +89,19 @@ public class Query5 implements Query {
         return future.get();
     }
 
-    private List<QueryOutputRow> getQueryOutput(Map<String, Integer> landingsAmount) {
+    private List<QueryOutputRow> getQueryOutput(Map<String, Integer> internationalFlights) {
         List<QueryOutputRow> queryOutput = new ArrayList<>();
 
-        for(String oaci : landingsAmount.keySet()) {
-            queryOutput.add(new QueryOutputRow(oaci, landingsAmount.get(oaci)));
+        for(String iata : internationalFlights.keySet()) {
+            queryOutput.add(new QueryOutputRow(iata, internationalFlights.get(iata)));
         }
 
         queryOutput.sort((QueryOutputRow o1, QueryOutputRow o2) -> {
-            int landingsAmountCmp = o2.percentage - o1.percentage;
-            if(landingsAmountCmp == 0) {
+            int intFlightsPercentageCmp = o2.percentage - o1.percentage;
+            if(intFlightsPercentageCmp == 0) {
                 return o1.iata.compareTo(o2.iata);
             }
-            return landingsAmountCmp;
+            return intFlightsPercentageCmp;
         });
 
         return queryOutput;
@@ -107,7 +128,7 @@ public class Query5 implements Query {
 
         @Override
         public String toString() {
-            return iata + ";" + percentage;
+            return iata + ";" + percentage + "%";
         }
     }
 }
