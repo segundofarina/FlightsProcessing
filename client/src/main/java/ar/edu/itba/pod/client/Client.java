@@ -8,6 +8,7 @@ import ar.edu.itba.pod.client.Parsers.MovementParser;
 import ar.edu.itba.pod.client.Queries.Query;
 import ar.edu.itba.pod.client.Queries.Query1.Query1;
 import ar.edu.itba.pod.client.Queries.Query2.Query2;
+import ar.edu.itba.pod.client.Queries.Query3.Query3;
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.core.HazelcastInstance;
 import org.slf4j.Logger;
@@ -48,9 +49,7 @@ public class Client {
 
 
         /* Get Query */
-        Query query = getQuery(params.getQueryNumber(),out,airports, movements, hz);
-
-
+        Query query = getQuery(params.getQueryNumber(), out, airports, movements, hz);
 
 
         /* Run Query */
@@ -66,20 +65,19 @@ public class Client {
     }
 
     private static void logParmsLoaded(ParamLoader params) {
-        logger.info("query: "+params.getQueryNumber());  
-        logger.info("movementsInPath: "+params.getMovementsInPath());
-        logger.info("airportsInPath: "+params.getAirportsInPath());
-        logger.info("outPath: "+params.getOutPath());
-        logger.info("timeOutPath: "+params.getTimeOutPath());
+        logger.info("query: " + params.getQueryNumber());
+        logger.info("movementsInPath: " + params.getMovementsInPath());
+        logger.info("airportsInPath: " + params.getAirportsInPath());
+        logger.info("outPath: " + params.getOutPath());
+        logger.info("timeOutPath: " + params.getTimeOutPath());
 
     }
 
 
-    private static Query getQuery(int queryNumber,Printer p ,List<Airport> airports, List<Movement> movements, HazelcastInstance hz){
+    private static Query getQuery(int queryNumber, Printer p, List<Airport> airports, List<Movement> movements, HazelcastInstance hz){
         Query query;
 
         switch (queryNumber){
-
             case 1:
                 query = new Query1(airports,movements,hz,p);
                 break ;
@@ -91,6 +89,7 @@ public class Client {
                     throw new IllegalArgumentException("There is no query number "+queryNumber);
 
         }
+        
         return query;
     }
 
