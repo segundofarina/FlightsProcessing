@@ -74,14 +74,14 @@ public class Client {
 
     private static Query getQuery(int queryNumber, Printer p, List<Airport> airports, List<Movement> movements, HazelcastInstance hz){
         Query query;
-        int n;
+        int n,min;
 
         switch (queryNumber){
             case 1:
                 query = new Query1(airports, movements, hz, p);
                 break ;
             case 2:
-               query = new Query2(movements, hz, p);
+                query = new Query2(movements, hz, p);
                 break;
 
             case 3:
@@ -89,12 +89,16 @@ public class Client {
                 break;
             case 4:
                 String oaci = Optional.ofNullable(System.getProperty("oaci")).orElseThrow(IllegalArgumentException::new);
-                n = Integer.parseInt(System.getProperty("n"));
-                query = new Query4(movements,hz,oaci,n,p);
+                n = Integer.parseInt(Optional.ofNullable(System.getProperty("n")).orElseThrow(IllegalArgumentException::new));
+                query = new Query4(movements, hz, oaci, n, p);
                 break;
             case 5:
-                n =  Integer.parseInt(System.getProperty("n"));
-                query = new Query5(movements,hz,n,p);
+                n = Integer.parseInt(Optional.ofNullable(System.getProperty("n")).orElseThrow(IllegalArgumentException::new));
+                query = new Query5(movements, hz, n, p);
+                break;
+            case 6:
+                min = Integer.parseInt(Optional.ofNullable(System.getProperty("min")).orElseThrow(IllegalArgumentException::new));
+                query = new Query6(movements, airports, hz, min);
                 break;
             default:
                 throw new IllegalArgumentException("There is no query number " + queryNumber);

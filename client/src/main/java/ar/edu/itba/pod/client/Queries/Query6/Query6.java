@@ -6,6 +6,7 @@ import ar.edu.itba.pod.Query6.CitiesMovementsCombinerFactory;
 import ar.edu.itba.pod.Query6.CitiesMovementsMapper;
 import ar.edu.itba.pod.Query6.CitiesMovementsReducerFactory;
 import ar.edu.itba.pod.Query6.CitiesTuple;
+import ar.edu.itba.pod.client.Printer;
 import ar.edu.itba.pod.client.Queries.Query;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.ICompletableFuture;
@@ -22,12 +23,14 @@ public class Query6 implements Query {
     private final List<Airport> airports;
     private final HazelcastInstance hz;
     private final int minMovements;
+    private final Printer printer;
 
-    public Query6(List<Movement> movements, List<Airport> airports, HazelcastInstance hz, int minMovements) {
+    public Query6(List<Movement> movements, List<Airport> airports, HazelcastInstance hz, int minMovements, Printer printer) {
         this.movements = movements;
         this.airports = airports;
         this.hz = hz;
         this.minMovements = minMovements;
+        this.printer = printer;
     }
 
     /*
@@ -115,9 +118,11 @@ public class Query6 implements Query {
 
     private void printOutput(List<QueryOutputRow> queryOutput) {
         System.out.println("Provincia A;Provincia B;Movimeintos");
+        printer.appendToFile("Provincia A;Provincia B;Movimeintos\n");
 
         for(QueryOutputRow row : queryOutput) {
             System.out.println(row);
+            printer.appendToFile(row+"\n");
         }
     }
 
