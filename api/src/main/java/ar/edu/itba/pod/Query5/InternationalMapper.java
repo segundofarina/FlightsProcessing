@@ -13,7 +13,9 @@ public class InternationalMapper implements Mapper<String, Movement, String, Int
     public void map(String s, Movement movement, Context<String, Integer> context) {
         if(movement.getFlightType().filter(f -> f == FlightType.INTERNATIONAL).isPresent() ) {
             context.emit(movement.getSourceOASI(), 1);
+            context.emit(movement.getDestinationOASI(),1);
         }else{
+            context.emit(movement.getDestinationOASI(),0);
             context.emit(movement.getSourceOASI(), 0);
         }
     }

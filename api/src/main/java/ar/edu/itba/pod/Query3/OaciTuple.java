@@ -11,6 +11,9 @@ public class OaciTuple implements DataSerializable {
     private String originOaci;
     private String destinationOaci;
 
+    public OaciTuple(){
+
+    }
     public OaciTuple(String originOaci, String destiantionOaci) {
         this.originOaci = originOaci;
         this.destinationOaci = destiantionOaci;

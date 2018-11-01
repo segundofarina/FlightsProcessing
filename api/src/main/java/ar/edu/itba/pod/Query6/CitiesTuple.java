@@ -8,10 +8,13 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class CitiesTuple implements Serializable {
+public class CitiesTuple implements DataSerializable {
     private String city1;
     private String city2;
 
+    public CitiesTuple() {
+
+    }
     public CitiesTuple(String city1, String city2) {
         this.city1 = city1;
         this.city2 = city2;
@@ -24,7 +27,7 @@ public class CitiesTuple implements Serializable {
     public String getCity2() {
         return city2;
     }
-/*
+
 
     @Override
     public void writeData(ObjectDataOutput out) throws IOException {
@@ -37,7 +40,7 @@ public class CitiesTuple implements Serializable {
         city1 = in.readUTF();
         city2 = in.readUTF();
     }
-*/
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
