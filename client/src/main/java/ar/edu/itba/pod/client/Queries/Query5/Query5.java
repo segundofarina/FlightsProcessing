@@ -37,7 +37,7 @@ public class Query5 implements Query {
         IList<Movement> hzMovement = hz.getList("movements");
         hzMovement.addAll(movements);
 
-        /* Create Query 4 Job */
+        /* Create Query 5 Job */
         JobTracker jobTracker = hz.getJobTracker("Query5");
 
         /* Get movements group amount
