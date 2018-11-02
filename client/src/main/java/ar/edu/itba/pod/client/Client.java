@@ -37,7 +37,13 @@ public class Client {
         Printer out =  new Printer(params.getOutPath());
 
         /* Connect client to hazelcast */
-        HazelcastInstance hz = HazelcastClient.newHazelcastClient();
+        HazelcastInstance hz;
+        try {
+            hz = HazelcastClient.newHazelcastClient();
+        } catch (IllegalStateException e) {
+            System.out.println("Unable to connect to cluster");
+            return;
+        }
 
         /* Load csv to list */
         times.log("Inicio de lectura del archivo");
