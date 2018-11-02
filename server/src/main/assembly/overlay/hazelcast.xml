@@ -25,8 +25,8 @@
            xmlns="http://www.hazelcast.com/schema/config"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <group>
-        <name>56086</name>
-        <password>56086</password>
+        <name>56086-56015-56176</name>
+        <password>56086-56015-56176</password>
     </group>
     <management-center enabled="false">http://localhost:8080/mancenter</management-center>
     <network>
