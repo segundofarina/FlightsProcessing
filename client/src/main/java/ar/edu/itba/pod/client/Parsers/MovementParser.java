@@ -3,6 +3,7 @@ package ar.edu.itba.pod.client.Parsers;
 import ar.edu.itba.pod.FlightType;
 import ar.edu.itba.pod.Movement;
 import ar.edu.itba.pod.MovementType;
+import com.hazelcast.core.IList;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -11,52 +12,35 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
-public class MovementParser implements CsvParser<Movement> {
+public class MovementParser implements CsvParser {
+    private final IList<Movement> movements;
+    private final List<Movement> localMovements;
+
+    public MovementParser(IList<Movement> movements) {
+        this.movements = movements;
+        this.localMovements = new ArrayList<>();
+    }
+
     @Override
-    public List<Movement> loadFile(Path path) {
-        List<String> lines = null;
-
-        try {
-             lines = Files.readAllLines(path, StandardCharsets.ISO_8859_1);
+    public void loadFile(Path path) {
+        try(Stream<String> stream = Files.lines(path, StandardCharsets.ISO_8859_1)) {
+            stream.skip(1).forEach(this::getMovementFrom);
         } catch (IOException e) {
             System.out.println("Unable to load movements");
         }
-
-        return getMovementsFrom(lines);
     }
 
-    private List<Movement> getMovementsFrom(List<String> lines) {
-        List<Movement> movements = new ArrayList<>();
-
-        if(lines == null) {
-            return movements;
-        }
-
-        /* Avoid first line of headers */
-        lines.remove(0);
-
-        for(String line : lines) {
-            movements.add(getMovementFrom(line));
-        }
-
-        return movements;
-    }
-
-    private Movement getMovementFrom(String line) {
+    private void getMovementFrom(String line) {
         String[] column = line.split(";");
-        return new Movement(getFlightType(column[3]), getMovementType(column[4]), column[5], column[6]);
-    }
+        localMovements.add(new Movement(getFlightType(column[3]), getMovementType(column[4]), column[5], column[6]));
 
-    /*private Optional<FlightType> getFlightType(String s) {
-        if(s.equalsIgnoreCase("cabotaje")) {
-            return Optional.of(FlightType.LOCAL);
+        if(localMovements.size() > 100) {
+            movements.addAll(localMovements);
+            localMovements.clear();
         }
-        if(s.equalsIgnoreCase("internacional")) {
-            return Optional.of(FlightType.INTERNATIONAL);
-        }
-        return Optional.empty();
-    }*/
+    }
 
     private Optional<FlightType> getFlightType(String s) {
         if(s.equalsIgnoreCase("cabotaje")) {

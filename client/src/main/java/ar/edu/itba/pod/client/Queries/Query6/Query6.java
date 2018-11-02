@@ -19,13 +19,13 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 public class Query6 implements Query {
-    private final List<Movement> movements;
-    private final List<Airport> airports;
+    private final IList<Movement> movements;
+    private final IList<Airport> airports;
     private final HazelcastInstance hz;
     private final int minMovements;
     private final Printer printer;
 
-    public Query6(List<Movement> movements, List<Airport> airports, HazelcastInstance hz, int minMovements, Printer printer) {
+    public Query6(IList<Movement> movements, IList<Airport> airports, HazelcastInstance hz, int minMovements, Printer printer) {
         this.movements = movements;
         this.airports = airports;
         this.hz = hz;
@@ -43,10 +43,6 @@ public class Query6 implements Query {
 
     @Override
     public void run() throws InterruptedException, ExecutionException {
-        /* Add movements list to hazelcast */
-        IList<Movement> hzMovement = hz.getList("movements");
-        hzMovement.addAll(movements);
-
         /* Create Query 6 Job */
         JobTracker jobTracker = hz.getJobTracker("Query6");
 
@@ -55,7 +51,7 @@ public class Query6 implements Query {
 
         /* Get cities movements
          * Key is citiesTuple, Value is amount of movements */
-        Map<CitiesTuple, Integer> citiesMovements = getCitiesMovements(jobTracker, hzMovement, oaciCityMap);
+        Map<CitiesTuple, Integer> citiesMovements = getCitiesMovements(jobTracker, movements, oaciCityMap);
 
         /* Get query output */
         List<QueryOutputRow> queryOutput = getQueryOutput(citiesMovements);

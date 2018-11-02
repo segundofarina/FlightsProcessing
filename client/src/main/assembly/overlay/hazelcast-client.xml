@@ -4,13 +4,13 @@
                                http://www.hazelcast.com/schema/client-config/hazelcast-client-config-3.9.xsd"
                   xmlns="http://www.hazelcast.com/schema/client-config">
     <group>
-        <name>56015-56086-56176</name>
-        <password>56015-56086-56176</password>
+        <name>56086-56015-56176</name>
+        <password>56086-56015-56176</password>
     </group>
     <network>
         <cluster-members>
+            <!--<address>${addresses}</address>-->
             <address>127.0.0.1:5701</address>
-            <address>127.0.0.1:5702</address>
         </cluster-members>
     </network>
 </hazelcast-client>

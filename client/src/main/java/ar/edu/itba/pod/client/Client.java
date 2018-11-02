@@ -13,7 +13,11 @@ import ar.edu.itba.pod.client.Queries.Query4.Query4;
 import ar.edu.itba.pod.client.Queries.Query5.Query5;
 import ar.edu.itba.pod.client.Queries.Query6.Query6;
 import com.hazelcast.client.HazelcastClient;
+import com.hazelcast.client.config.ClientConfig;
+import com.hazelcast.client.config.ClientNetworkConfig;
+import com.hazelcast.config.GroupConfig;
 import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.IList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,22 +39,36 @@ public class Client {
         Printer times = new Printer(params.getTimeOutPath());
         Printer out =  new Printer(params.getOutPath());
 
+        /* Connect client to hazelcast */
+        HazelcastInstance hz;
+
+        /* Get cluster members */
+        ClientConfig hzConfig = getHzConfig();
+
+        try {
+            hz = HazelcastClient.newHazelcastClient(hzConfig);
+        } catch (IllegalStateException e) {
+            System.out.println("Unable to connect to cluster");
+            return;
+        }
+
         /* Load csv to list */
         times.log("Inicio de lectura del archivo");
 
-        CsvParser<Airport> airportCsvParser = new AirportParser();
-        List<Airport> airports = airportCsvParser.loadFile(Paths.get(params.getAirportsInPath()));
+        IList<Airport> airportsHz = hz.getList("airports");
 
-        CsvParser<Movement> movementCsvParser = new MovementParser();
-        List<Movement> movements = movementCsvParser.loadFile(Paths.get(params.getMovementsInPath()));
+        CsvParser airportCsvParser = new AirportParser(airportsHz);
+        airportCsvParser.loadFile(Paths.get(params.getAirportsInPath()));
+
+        IList<Movement> movementsHz = hz.getList("movements");
+
+        CsvParser movementCsvParser = new MovementParser(movementsHz);
+        movementCsvParser.loadFile(Paths.get(params.getMovementsInPath()));
 
         times.log("Fin de lectura del archivo");
 
-        /* Connect client to hazelcast */
-        HazelcastInstance hz = HazelcastClient.newHazelcastClient();
-
         /* Get Query */
-        Query query = getQuery(params.getQueryNumber(), out, airports, movements, hz);
+        Query query = getQuery(params.getQueryNumber(), out, airportsHz, movementsHz, hz);
 
         /* Run Query */
         times.log("Inicio del trabajo Map/reduce");
@@ -58,6 +76,10 @@ public class Client {
         query.run();
 
         times.log("Fin del trabajo Map/reduce");
+
+        /* Remove lists from hz */
+        airportsHz.destroy();
+        movementsHz.destroy();
 
         /* Shutdown this Hazelcast client */
         hz.shutdown();
@@ -75,7 +97,7 @@ public class Client {
         logger.info("timeOutPath: " + params.getTimeOutPath());
     }
 
-    private static Query getQuery(int queryNumber, Printer p, List<Airport> airports, List<Movement> movements, HazelcastInstance hz){
+    private static Query getQuery(int queryNumber, Printer p, IList<Airport> airports, IList<Movement> movements, HazelcastInstance hz){
         Query query;
         int n,min;
 
@@ -107,6 +129,22 @@ public class Client {
         }
 
         return query;
+    }
+
+    private static ClientConfig getHzConfig() {
+        String addresses = Optional.ofNullable(System.getProperty("addresses")).orElseThrow(IllegalArgumentException::new);
+        String addressList[] = addresses.split(";");
+
+        ClientConfig clientConfig = new ClientConfig();
+        clientConfig.setGroupConfig(new GroupConfig("56086-56015-56176", "56086-56015-56176"));
+
+        ClientNetworkConfig networkConfig = clientConfig.getNetworkConfig();
+
+        for (String address : addressList) {
+            networkConfig.addAddress(address);
+        }
+
+        return clientConfig;
     }
 
 }
