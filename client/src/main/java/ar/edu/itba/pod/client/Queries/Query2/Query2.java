@@ -72,8 +72,8 @@ public class Query2 implements Query {
         hzOaciMovemntsMap.putAll(oaciMovementsMap);
 
         /* Key is oaci, Value is amount of movements */
-        KeyValueSource<String, Integer> soruce = KeyValueSource.fromMap(hzOaciMovemntsMap);
-        Job<String, Integer> job = jobTracker.newJob(soruce);
+        KeyValueSource<String, Integer> source = KeyValueSource.fromMap(hzOaciMovemntsMap);
+        Job<String, Integer> job = jobTracker.newJob(source);
 
         /* Run map reduce
         * Key is thousand of movements, Value is list of oaci codes */
