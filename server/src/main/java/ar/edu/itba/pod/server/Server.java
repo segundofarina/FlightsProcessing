@@ -15,14 +15,6 @@ public class Server {
     public static void main(String[] args) {
         logger.info("Server Starting ...");
 
-        /*String addresses = Optional.ofNullable(System.getProperty("addresses")).orElseThrow(IllegalArgumentException::new);
-        String addressList[] = addresses.split(";");
-
-        Config config = new Config();
-        NetworkConfig networkConfig = config.getNetworkConfig();
-
-        for (String address : addressList) {
-        }*/
 
         HazelcastInstance hz = Hazelcast.newHazelcastInstance();
     }
