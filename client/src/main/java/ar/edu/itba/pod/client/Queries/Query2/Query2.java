@@ -119,8 +119,8 @@ public class Query2 implements Query {
     }
 
     private void printOutput(List<QueryOutputRow> queryOutput) { // THIS SHOULD PRINT TO EXTERNAL FILE
-        System.out.println("Grupo;Aeropuerto 1;Aeropuerto 2");
-        printer.appendToFile("Grupo;Aeropuerto 1;Aeropuerto 2\n");
+        System.out.println("Grupo;Aeropuerto A;Aeropuerto B");
+        printer.appendToFile("Grupo;Aeropuerto A;Aeropuerto B\n");
         for(QueryOutputRow row : queryOutput) {
             System.out.println(row);
             printer.appendToFile(row+"\n");

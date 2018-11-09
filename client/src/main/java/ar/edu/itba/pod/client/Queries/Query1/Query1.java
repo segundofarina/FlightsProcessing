@@ -62,7 +62,7 @@ public class Query1 implements Query {
         Map<String, String> oaciNameMap = getOaciNameMap();
 
         /* Generate output joining oaci with name */
-        for(String oaci : oaciMovemntsMap.keySet()) {
+        for(String oaci : oaciNameMap.keySet()) {
             queryOutput.add(new QueryOutputRow(oaci, oaciNameMap.get(oaci), oaciMovemntsMap.get(oaci)));
         }
 
@@ -91,9 +91,6 @@ public class Query1 implements Query {
 
         for(Airport airport : airports) {
             airport.getOaci().ifPresent(oaci -> oaciName.put(oaci,airport.getName()));
-//            if(airport.getOaci() != null) { // THIS SHOULD BE OPTIONAL
-//                oaciName.put(airport.getOaci(), airport.getName());
-//            }
         }
 
         return oaciName;
@@ -102,18 +99,17 @@ public class Query1 implements Query {
     private class QueryOutputRow {
         private final String OACI;
         private final String name;
-        private final int sum;
+        private final Integer sum;
 
-        public QueryOutputRow(String OACI, String name, int sum) {
+        public QueryOutputRow(String OACI, String name, Integer sum) {
             this.OACI = OACI;
             this.name = name;
-            this.sum = sum;
+            this.sum = sum==null?0:sum;
         }
 
         @Override
         public String toString() {
-            String notNullName = name == null ? "" : name;
-            return OACI + ";" + notNullName + ";" + sum;
+            return OACI + ";" + name + ";" + sum;
         }
     }
 }
