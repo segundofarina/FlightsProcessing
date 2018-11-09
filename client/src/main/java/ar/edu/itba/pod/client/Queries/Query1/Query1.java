@@ -77,11 +77,9 @@ public class Query1 implements Query {
         return queryOutput;
     }
 
-    private void printOutput(List<QueryOutputRow> queryOutput) { // THIS SHOULD PRINT TO EXTERNAL FILE
-        System.out.println("OACI;Denominacion;Movimientos");
+    private void printOutput(List<QueryOutputRow> queryOutput) {
         printer.appendToFile("OACI;Denominacion;Movimientos\n");
         for(QueryOutputRow row : queryOutput) {
-            System.out.println(row);
             printer.appendToFile(row+"\n");
         }
     }

@@ -88,10 +88,8 @@ public class Query3 implements Query {
     }
 
     private void printOutput(List<QueryOutputRow> queryOutput) {
-        System.out.println("Origen;Destino;Origen->Destino;Destino->Origen");
         printer.appendToFile("Origen;Destino;Origen->Destino;Destino->Origen\n");
         for(QueryOutputRow row : queryOutput) {
-            System.out.println(row);
             printer.appendToFile(row+"\n");
         }
     }

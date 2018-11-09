@@ -35,7 +35,6 @@ public class InternationalMapper implements Mapper<String, Movement, String, Int
         if(movement.getFlightType().filter(f -> f == FlightType.INTERNATIONAL).isPresent() ) {
             return 1;
         }
-        //return -1;
         return 0;
     }
 }

@@ -11,6 +11,7 @@ public class MovementsMapper implements Mapper<String, Movement, String, Integer
         if(movement.getMovementType() == MovementType.TAKE_OF) {
             context.emit(movement.getSourceOASI(), 1);
         }
+
         if(movement.getMovementType() == MovementType.LANDING) {
             context.emit(movement.getDestinationOASI(), 1);
         }
