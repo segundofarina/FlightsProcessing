@@ -63,7 +63,10 @@ public class Query1 implements Query {
 
         /* Generate output joining oaci with name */
         for(String oaci : oaciMovemntsMap.keySet()) {
-            queryOutput.add(new QueryOutputRow(oaci, oaciNameMap.get(oaci), oaciMovemntsMap.get(oaci)));
+            String name = oaciNameMap.get(oaci);
+            if(name != null) {
+                queryOutput.add(new QueryOutputRow(oaci, name, oaciMovemntsMap.get(oaci)));
+            }
         }
 
         /* Sort output list by movements amount decendent, and OACI */
@@ -77,7 +80,7 @@ public class Query1 implements Query {
         return queryOutput;
     }
 
-    private void printOutput(List<QueryOutputRow> queryOutput) { // THIS SHOULD PRINT TO EXTERNAL FILE
+    private void printOutput(List<QueryOutputRow> queryOutput) {
         System.out.println("OACI;Denominacion;Movimientos");
         printer.appendToFile("OACI;Denominacion;Movimientos\n");
         for(QueryOutputRow row : queryOutput) {
@@ -91,9 +94,6 @@ public class Query1 implements Query {
 
         for(Airport airport : airports) {
             airport.getOaci().ifPresent(oaci -> oaciName.put(oaci,airport.getName()));
-//            if(airport.getOaci() != null) { // THIS SHOULD BE OPTIONAL
-//                oaciName.put(airport.getOaci(), airport.getName());
-//            }
         }
 
         return oaciName;
@@ -112,8 +112,7 @@ public class Query1 implements Query {
 
         @Override
         public String toString() {
-            String notNullName = name == null ? "" : name;
-            return OACI + ";" + notNullName + ";" + sum;
+            return OACI + ";" + name + ";" + sum;
         }
     }
 }

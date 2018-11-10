@@ -37,7 +37,7 @@ public class Query6 implements Query {
      * Generate oaci -> city map.
      * Create map reduce job iterates over movements list
      * and gets (oaci -> city map) by constructor,
-     * emit citiesTuple -> 1 if cities are diferent,
+     * emit citiesTuple -> 1 if cities are different,
      * reducer sums movements.
      * */
 
@@ -96,9 +96,9 @@ public class Query6 implements Query {
                 String cityA = citiesTuple.getCity1();
                 String cityB = citiesTuple.getCity2();
 
-                if(citiesTuple.getCity1().compareTo(citiesTuple.getCity2()) > 0) {
-                    cityA = citiesTuple.getCity1();
-                    cityB = citiesTuple.getCity2();
+                if(citiesTuple.getCity2().compareTo(citiesTuple.getCity1()) < 0) {
+                    cityA = citiesTuple.getCity2();
+                    cityB = citiesTuple.getCity1();
                 }
 
                 queryOutput.add(new QueryOutputRow(cityA, cityB, citiesMovements.get(citiesTuple)));
@@ -111,8 +111,8 @@ public class Query6 implements Query {
     }
 
     private void printOutput(List<QueryOutputRow> queryOutput) {
-        System.out.println("Provincia A;Provincia B;Movimeintos");
-        printer.appendToFile("Provincia A;Provincia B;Movimeintos\n");
+        System.out.println("Provincia A;Provincia B;Movimientos");
+        printer.appendToFile("Provincia A;Provincia B;Movimientos\n");
 
         for(QueryOutputRow row : queryOutput) {
             System.out.println(row);
