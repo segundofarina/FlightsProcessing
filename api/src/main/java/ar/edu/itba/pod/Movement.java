@@ -5,12 +5,10 @@ import com.hazelcast.nio.ObjectDataOutput;
 import com.hazelcast.nio.serialization.DataSerializable;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.Optional;
 
 public class Movement implements DataSerializable {
     private  Optional<FlightType> flightType;
-    //private FlightType flightType;
     private MovementType movementType;
     private String sourceOASI;
     private String destinationOASI;

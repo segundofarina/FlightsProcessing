@@ -58,11 +58,6 @@ public class Query5 implements Query {
         /* Key is oaci, value is iata */
         Map<String, String> oaciIataMap = new HashMap<>();
 
-//        for(Airport airport : airports) {
-//            if(airport.getOaci() != null && airport.getIata() != null) {
-//                oaciIataMap.put(airport.getOaci(), airport.getIata());
-//            }
-//        }
         for(Airport airport : airports) {
             airport.getOaci().ifPresent(oaci -> airport.getIata().ifPresent(iata-> oaciIataMap.put(oaci, iata)));
         }
@@ -107,11 +102,9 @@ public class Query5 implements Query {
     }
 
     private void printOutput(List<QueryOutputRow> queryOutput) {
-        System.out.println("IATA;Porcentaje");
         printer.appendToFile("IATA;Porcentaje\n");
 
         for(int i = 0; i < numberOfResults && i< queryOutput.size(); i++) {
-            System.out.println(queryOutput.get(i));
             printer.appendToFile(queryOutput.get(i)+"\n");
         }
     }

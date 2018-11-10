@@ -81,10 +81,8 @@ public class Query1 implements Query {
     }
 
     private void printOutput(List<QueryOutputRow> queryOutput) {
-        System.out.println("OACI;Denominacion;Movimientos");
         printer.appendToFile("OACI;Denominacion;Movimientos\n");
         for(QueryOutputRow row : queryOutput) {
-            System.out.println(row);
             printer.appendToFile(row+"\n");
         }
     }
@@ -102,12 +100,12 @@ public class Query1 implements Query {
     private class QueryOutputRow {
         private final String OACI;
         private final String name;
-        private final int sum;
+        private final Integer sum;
 
-        public QueryOutputRow(String OACI, String name, int sum) {
+        public QueryOutputRow(String OACI, String name, Integer sum) {
             this.OACI = OACI;
             this.name = name;
-            this.sum = sum;
+            this.sum = sum==null?0:sum;
         }
 
         @Override

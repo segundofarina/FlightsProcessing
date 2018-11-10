@@ -119,10 +119,9 @@ public class Query2 implements Query {
     }
 
     private void printOutput(List<QueryOutputRow> queryOutput) {
-        System.out.println("Grupo;Aeropuerto 1;Aeropuerto 2");
-        printer.appendToFile("Grupo;Aeropuerto 1;Aeropuerto 2\n");
+        printer.appendToFile("Grupo;Aeropuerto A;Aeropuerto B\n");
+
         for(QueryOutputRow row : queryOutput) {
-            System.out.println(row);
             printer.appendToFile(row+"\n");
         }
     }
