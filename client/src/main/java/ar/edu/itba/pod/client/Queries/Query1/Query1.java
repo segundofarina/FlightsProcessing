@@ -62,7 +62,7 @@ public class Query1 implements Query {
         Map<String, String> oaciNameMap = getOaciNameMap();
 
         /* Generate output joining oaci with name */
-        for(String oaci : oaciNameMap.keySet()) {
+        for(String oaci : oaciMovemntsMap.keySet()) {
             queryOutput.add(new QueryOutputRow(oaci, oaciNameMap.get(oaci), oaciMovemntsMap.get(oaci)));
         }
 
