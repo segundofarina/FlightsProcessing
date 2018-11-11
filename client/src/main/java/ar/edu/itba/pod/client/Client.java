@@ -109,7 +109,7 @@ public class Client {
                 query = new Query2(movements, hz, p);
                 break;
             case 3:
-                query = new Query3(movements, hz, p);
+                query = new Query3(airports,movements, hz, p);
                 break;
             case 4:
                 String oaci = Optional.ofNullable(System.getProperty("oaci")).orElseThrow(IllegalArgumentException::new);

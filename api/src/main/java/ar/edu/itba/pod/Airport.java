@@ -5,6 +5,7 @@ import com.hazelcast.nio.ObjectDataOutput;
 import com.hazelcast.nio.serialization.DataSerializable;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Optional;
 
 public class Airport implements DataSerializable {
@@ -64,5 +65,19 @@ public class Airport implements DataSerializable {
         iata = Optional.of(in.readUTF()).filter(s -> !"NULL".equals(s));
         name = in.readUTF();
         city = in.readUTF();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Airport)) return false;
+        Airport airport = (Airport) o;
+        return Objects.equals(getOaci(), airport.getOaci()) &&
+                Objects.equals(getIata(), airport.getIata());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getOaci(), getIata());
     }
 }

@@ -1,5 +1,6 @@
 package ar.edu.itba.pod.client.Queries.Query3;
 
+import ar.edu.itba.pod.Airport;
 import ar.edu.itba.pod.Movement;
 import ar.edu.itba.pod.Query3.AirportMovementsCombinerFactory;
 import ar.edu.itba.pod.Query3.AirportMovementsMapper;
@@ -17,14 +18,17 @@ import com.hazelcast.mapreduce.KeyValueSource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 public class Query3 implements Query {
+    private IList<Airport> airports;
     private IList<Movement> movements;
     private HazelcastInstance hz;
     private Printer printer;
 
-    public Query3(IList<Movement> movements, HazelcastInstance hz,Printer printer) {
+    public Query3(IList<Airport> airports, IList<Movement> movements, HazelcastInstance hz,Printer printer) {
+        this.airports = airports;
         this.movements = movements;
         this.hz = hz;
         this.printer = printer;
@@ -65,16 +69,36 @@ public class Query3 implements Query {
     private List<QueryOutputRow> getQueryOutput(Map<OaciTuple, Integer> airportMovements) {
         List<QueryOutputRow> queryOutput = new ArrayList<>();
 
-        for(OaciTuple oaciTuple : airportMovements.keySet()) {
-            Integer dir = airportMovements.get(oaciTuple);
-            Integer opositeDir = airportMovements.get(new OaciTuple(oaciTuple.getDestinationOaci(), oaciTuple.getOriginOaci()));
-            if(opositeDir == null) {
-                opositeDir = 0;
-            }
+        for(Airport origin : airports) {
+            for(Airport destination : airports){
+                Optional<String> originOaci = origin.getOaci();
+                Optional<String> destinationOaci = destination.getOaci();
 
-            queryOutput.add(new QueryOutputRow(oaciTuple, dir, opositeDir));
+                    if (!origin.equals(destination) && originOaci.isPresent() && destinationOaci.isPresent()) {
+
+                        OaciTuple oaciTuple = new OaciTuple(originOaci.get(), destinationOaci.get());
+                        OaciTuple invertedOaciTuple = new OaciTuple(destinationOaci.get(), originOaci.get());
+
+                        Integer dir = airportMovements.get(oaciTuple);
+                        Integer opositeDir = airportMovements.get(invertedOaciTuple);
+
+                        if (dir == null) { dir = 0; }
+                        if (opositeDir == null) { opositeDir = 0; }
+
+                        if(dir !=0 && opositeDir !=0) {
+                            queryOutput.add(new QueryOutputRow(oaciTuple, dir, opositeDir));
+                            queryOutput.add(new QueryOutputRow(invertedOaciTuple, opositeDir, dir));
+
+//                            System.out.println(new QueryOutputRow(oaciTuple, dir, opositeDir));
+//                            System.out.println(new QueryOutputRow(invertedOaciTuple, opositeDir, dir));
+                        }
+
+                    }
+
+            }
         }
 
+        /* Sort query output */
         queryOutput.sort((QueryOutputRow o1, QueryOutputRow o2) -> {
             int originOaciCmp = o1.oaciTuple.getOriginOaci().compareTo(o2.oaciTuple.getOriginOaci());
             if(originOaciCmp == 0) {
