@@ -27,6 +27,8 @@ public class MovementParser implements CsvParser {
     public void loadFile(Path path) {
         try(Stream<String> stream = Files.lines(path, StandardCharsets.ISO_8859_1)) {
             stream.skip(1).forEach(this::getMovementFrom);
+            /* Fix last push to Hz */
+            movements.addAll(localMovements);
         } catch (IOException e) {
             System.out.println("Unable to load movements");
         }

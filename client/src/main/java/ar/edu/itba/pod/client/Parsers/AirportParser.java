@@ -24,6 +24,8 @@ public class AirportParser implements CsvParser {
     public void loadFile(Path path) {
         try(Stream<String> stream = Files.lines(path)) {
             stream.skip(1).forEach(this::getAirportFrom);
+            /* Fix last push to Hz */
+            airportsHz.addAll(localAirports);
         } catch (IOException e) {
             System.out.println("Unable to load airports");
         }
