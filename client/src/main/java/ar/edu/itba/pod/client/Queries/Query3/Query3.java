@@ -1,5 +1,6 @@
 package ar.edu.itba.pod.client.Queries.Query3;
 
+import ar.edu.itba.pod.Airport;
 import ar.edu.itba.pod.Movement;
 import ar.edu.itba.pod.Query3.AirportMovementsCombinerFactory;
 import ar.edu.itba.pod.Query3.AirportMovementsMapper;
@@ -17,6 +18,7 @@ import com.hazelcast.mapreduce.KeyValueSource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 public class Query3 implements Query {
@@ -82,6 +84,7 @@ public class Query3 implements Query {
             }
         }
 
+        /* Sort query output */
         queryOutput.sort((QueryOutputRow o1, QueryOutputRow o2) -> {
             int originOaciCmp = o1.oaciTuple.getOriginOaci().compareTo(o2.oaciTuple.getOriginOaci());
             if(originOaciCmp == 0) {

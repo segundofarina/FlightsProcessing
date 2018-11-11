@@ -101,7 +101,7 @@ public class Query6 implements Query {
                     cityB = citiesTuple.getCity1();
                 }
 
-                queryOutput.add(new QueryOutputRow(cityA, cityB, citiesMovements.get(citiesTuple)));
+                queryOutput.add(new QueryOutputRow(cityA, cityB, movements));
             }
         }
 

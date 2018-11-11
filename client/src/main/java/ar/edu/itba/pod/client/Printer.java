@@ -12,7 +12,7 @@ public class Printer {
     public Printer(String name) {
 
         try {
-            bw = new BufferedWriter(new FileWriter(name , true));
+            bw = new BufferedWriter(new FileWriter(name , false));
         } catch (IOException e) {
             e.printStackTrace();
         }
