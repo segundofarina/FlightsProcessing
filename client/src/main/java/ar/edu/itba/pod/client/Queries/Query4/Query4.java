@@ -85,7 +85,7 @@ public class Query4 implements Query {
     }
 
     private void printOutput(List<QueryOutputRow> queryOutput) {
-        printer.appendToFile("Oaci;Aterrizajes\n");
+        printer.appendToFile("OACI;Aterrizajes\n");
 
         for(int i = 0; i < queryOutput.size() && i < numberOfResults; i++) {
             printer.appendToFile(queryOutput.get(i)+"\n");
