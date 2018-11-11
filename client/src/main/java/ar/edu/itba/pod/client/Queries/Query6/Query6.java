@@ -96,11 +96,6 @@ public class Query6 implements Query {
                 String cityA = citiesTuple.getCity1();
                 String cityB = citiesTuple.getCity2();
 
-                if(citiesTuple.getCity1().compareTo(citiesTuple.getCity2()) > 0) {
-                    cityA = citiesTuple.getCity1();
-                    cityB = citiesTuple.getCity2();
-                }
-
                 queryOutput.add(new QueryOutputRow(cityA, cityB, citiesMovements.get(citiesTuple)));
             }
         }
@@ -111,7 +106,7 @@ public class Query6 implements Query {
     }
 
     private void printOutput(List<QueryOutputRow> queryOutput) {
-        printer.appendToFile("Provincia A;Provincia B;Movimeintos\n");
+        printer.appendToFile("Provincia A;Provincia B;Movimientos\n");
 
         for(QueryOutputRow row : queryOutput) {
             printer.appendToFile(row+"\n");
