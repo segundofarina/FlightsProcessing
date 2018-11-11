@@ -25,6 +25,8 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 
+import static java.lang.System.exit;
+
 public class Client {
     private static Logger logger = LoggerFactory.getLogger(Client.class);
 
@@ -98,8 +100,8 @@ public class Client {
     }
 
     private static Query getQuery(int queryNumber, Printer p, IList<Airport> airports, IList<Movement> movements, HazelcastInstance hz){
-        Query query;
-        int n,min;
+        Query query = null;
+        Optional<String> n;
 
         switch (queryNumber){
             case 1:
@@ -112,20 +114,36 @@ public class Client {
                 query = new Query3(movements, hz, p);
                 break;
             case 4:
-                String oaci = Optional.ofNullable(System.getProperty("oaci")).orElseThrow(IllegalArgumentException::new);
-                n = Integer.parseInt(Optional.ofNullable(System.getProperty("n")).orElseThrow(IllegalArgumentException::new));
-                query = new Query4(movements, hz, oaci, n, p);
+                Optional<String> oaci = Optional.ofNullable(System.getProperty("oaci"));
+                n = Optional.ofNullable(System.getProperty("n"));
+                if(!oaci.isPresent() || !n.isPresent()) {
+                    System.out.println("\n\nMissing Parameters\nQuery 4 should be run with -Doaci=<OACI Code> -Dn=<Number of airports>\n");
+                    exit(1);
+                }
+
+                query = new Query4(movements, hz, oaci.get(), Integer.parseInt(n.get()), p);
                 break;
             case 5:
-                n = Integer.parseInt(Optional.ofNullable(System.getProperty("n")).orElseThrow(IllegalArgumentException::new));
-                query = new Query5(movements, airports,hz, n, p);
+                n = Optional.ofNullable(System.getProperty("n"));
+                if(!n.isPresent()) {
+                    System.out.println("\n\nMissing Parameters\nQuery 5 should be run with -Dn=<Number of airports>\n");
+                    exit(1);
+                }
+
+                query = new Query5(movements, airports,hz, Integer.parseInt(n.get()), p);
                 break;
             case 6:
-                min = Integer.parseInt(Optional.ofNullable(System.getProperty("min")).orElseThrow(IllegalArgumentException::new));
-                query = new Query6(movements, airports, hz, min, p);
+                Optional<String> min = Optional.ofNullable(System.getProperty("min"));
+                if(!min.isPresent()) {
+                    System.out.println("\n\nMissing Parameters\nQuery 6 should be run with -Dmin=<Minimum movements>\n");
+                    exit(1);
+                }
+
+                query = new Query6(movements, airports, hz, Integer.parseInt(min.get()), p);
                 break;
             default:
-                throw new IllegalArgumentException("There is no query number " + queryNumber);
+                System.out.println("\n\nError - Query number not supported. Queries should go from 1 to 6.\n");
+                exit(1);
         }
 
         return query;
