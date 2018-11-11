@@ -124,8 +124,13 @@ public class Query6 implements Query {
         private final int movements;
 
         public QueryOutputRow(String cityA, String cityB, int movements) {
-            this.cityA = cityA;
-            this.cityB = cityB;
+            if(cityA.compareTo(cityB)<=0) {
+                this.cityA = cityA;
+                this.cityB = cityB;
+            }else{
+                this.cityA = cityB;
+                this.cityB = cityA;
+            }
             this.movements = movements;
         }
 
