@@ -111,7 +111,7 @@ public class Query6 implements Query {
     }
 
     private void printOutput(List<QueryOutputRow> queryOutput) {
-        printer.appendToFile("Provincia A;Provincia B;Movimeintos\n");
+        printer.appendToFile("Provincia A;Provincia B;Movimientos\n");
 
         for(QueryOutputRow row : queryOutput) {
             printer.appendToFile(row+"\n");
