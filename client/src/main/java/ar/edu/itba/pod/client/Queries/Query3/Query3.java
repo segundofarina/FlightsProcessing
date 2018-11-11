@@ -22,13 +22,11 @@ import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 public class Query3 implements Query {
-    private IList<Airport> airports;
     private IList<Movement> movements;
     private HazelcastInstance hz;
     private Printer printer;
 
-    public Query3(IList<Airport> airports, IList<Movement> movements, HazelcastInstance hz,Printer printer) {
-        this.airports = airports;
+    public Query3(IList<Movement> movements, HazelcastInstance hz,Printer printer) {
         this.movements = movements;
         this.hz = hz;
         this.printer = printer;
@@ -69,33 +67,23 @@ public class Query3 implements Query {
     private List<QueryOutputRow> getQueryOutput(Map<OaciTuple, Integer> airportMovements) {
         List<QueryOutputRow> queryOutput = new ArrayList<>();
 
-        for(Airport origin : airports) {
-            for(Airport destination : airports){
-                Optional<String> originOaci = origin.getOaci();
-                Optional<String> destinationOaci = destination.getOaci();
+        for(OaciTuple oaciTuple: airportMovements.keySet()) {
 
-                    if (!origin.equals(destination) && originOaci.isPresent() && destinationOaci.isPresent()) {
+                    if (!oaciTuple.getOriginOaci().equals(oaciTuple.getDestinationOaci())) {
 
-                        OaciTuple oaciTuple = new OaciTuple(originOaci.get(), destinationOaci.get());
-                        OaciTuple invertedOaciTuple = new OaciTuple(destinationOaci.get(), originOaci.get());
+                        OaciTuple invertedOaciTuple = new OaciTuple(oaciTuple.getDestinationOaci(), oaciTuple.getOriginOaci());
 
                         Integer dir = airportMovements.get(oaciTuple);
                         Integer opositeDir = airportMovements.get(invertedOaciTuple);
 
-                        if (dir == null) { dir = 0; }
                         if (opositeDir == null) { opositeDir = 0; }
 
                         if(dir !=0 && opositeDir !=0) {
                             queryOutput.add(new QueryOutputRow(oaciTuple, dir, opositeDir));
                             queryOutput.add(new QueryOutputRow(invertedOaciTuple, opositeDir, dir));
-
-//                            System.out.println(new QueryOutputRow(oaciTuple, dir, opositeDir));
-//                            System.out.println(new QueryOutputRow(invertedOaciTuple, opositeDir, dir));
                         }
 
                     }
-
-            }
         }
 
         /* Sort query output */
@@ -114,6 +102,7 @@ public class Query3 implements Query {
     private void printOutput(List<QueryOutputRow> queryOutput) {
         printer.appendToFile("Origen;Destino;Origen->Destino;Destino->Origen\n");
         for(QueryOutputRow row : queryOutput) {
+            System.out.println(row);
             printer.appendToFile(row+"\n");
         }
     }
