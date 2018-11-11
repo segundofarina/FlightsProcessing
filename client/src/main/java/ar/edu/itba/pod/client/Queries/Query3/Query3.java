@@ -67,12 +67,19 @@ public class Query3 implements Query {
 
         for(OaciTuple oaciTuple : airportMovements.keySet()) {
             Integer dir = airportMovements.get(oaciTuple);
-            Integer opositeDir = airportMovements.get(new OaciTuple(oaciTuple.getDestinationOaci(), oaciTuple.getOriginOaci()));
+            OaciTuple opositeTuple = new OaciTuple(oaciTuple.getDestinationOaci(), oaciTuple.getOriginOaci());
+            Integer opositeDir = airportMovements.get(opositeTuple);
             if(opositeDir == null) {
                 opositeDir = 0;
             }
 
             queryOutput.add(new QueryOutputRow(oaciTuple, dir, opositeDir));
+
+            /* Fix missing tuple when opositeDir is 0 */
+
+            if(opositeDir == 0) {
+                queryOutput.add(new QueryOutputRow(opositeTuple, opositeDir, dir));
+            }
         }
 
         queryOutput.sort((QueryOutputRow o1, QueryOutputRow o2) -> {
